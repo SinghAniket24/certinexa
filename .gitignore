@@ -1,0 +1,10 @@
+# Node.js
+node_modules/
+.env
+dist/
+build/
+.cache/
+.DS_Store
+
+# VS Code
+.vscode/
