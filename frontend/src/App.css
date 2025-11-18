@@ -1,21 +1,130 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* PAGE BACKGROUND */
+.page {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+ background: linear-gradient(135deg, #e6f0fa, #6ca6e0);
+
+}
+
+
+/* BANNER */
 .banner {
+  width: 100%;
+  max-width: 1400px;
+  padding: 25px 10px;
   text-align: center;
-  padding: 50px 20px;
-  background: linear-gradient(90deg, #4e54c8, #8f94fb);
-  color: white;
-  height: 100vh;
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #1e3a8a, #4f6ef7);
+  color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  margin-bottom: 50px;
+}
+
+/* CARDS WRAPPER */
+.cards-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: nowrap;
+  height: 50vh; /* ~half page height */
+}
+
+/* ROLE CARD BASE */
+.role-card {
+  flex: 1;
+  padding: 40px 30px;
+  border-radius: 25px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  text-align: center;
+  background-size: 200% 200%;
 }
 
-.banner h1 {
-  margin: 0;
-  font-size: 3rem;
+/* ICON */
+.card-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+  opacity: 0.9;
+  color:black;
 }
 
-.banner p {
-  margin-top: 10px;
-  font-size: 1.5rem;
+/* INDIVIDUAL CARD COLORS */
+.issuer {
+  background: linear-gradient(135deg, #1e3a8a, #3a6ef7);
+}
+
+.recipient {
+  background: linear-gradient(135deg, #007d91, #40c4ce);
+}
+
+.verifier {
+  background: linear-gradient(135deg, #9b1f28, #e55d4d);
+}
+
+/* HOVER EFFECT */
+.role-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  background-position: right center; /* subtle gradient shift */
+}
+
+/* CARD TEXT */
+.role-card h2 {
+  font-size: 32px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.role-card p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #f0f0f0;
+}
+
+/* RESPONSIVE: STACK ON MEDIUM SCREENS */
+@media (max-width: 1200px) {
+  .cards-wrapper {
+    flex-wrap: wrap;
+    gap: 20px;
+    height: auto;
+  }
+  .role-card {
+    flex: 1 1 100%;
+    height: 350px;
+    padding: 35px;
+  }
+}
+
+/* RESPONSIVE: STACK ON SMALL SCREENS */
+@media (max-width: 768px) {
+  .banner {
+    font-size: 26px;
+    padding: 20px 10px;
+  }
+  .role-card {
+    height: auto;
+    padding: 30px;
+  }
 }
