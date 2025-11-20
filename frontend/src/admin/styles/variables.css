@@ -1,0 +1,31 @@
+/* src/styles/variables.css */
+:root {
+    /* User Defined Palette */
+    --void-navy: #0F172A;
+    --nexa-blue: #3B82F6;
+    --chain-teal: #06B6D4;
+    --seal-gold: #F59E0B;
+    --slate-mist: #F8FAFC;
+    --success-green: #10B981;
+    --danger-red: #EF4444;
+    
+    /* Utilities */
+    --white: #FFFFFF;
+    --gray-light: #E2E8F0;
+    --gray-text: #64748B;
+    --gray-hover: #F1F5F9;
+    
+    /* Spacing & Borders */
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-main);
+    background-color: var(--slate-mist);
+    color: var(--void-navy);
+}

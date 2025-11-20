@@ -1,0 +1,177 @@
+.reg-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #344467, #a3b4cf, #85a2d1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+}
+
+.top-header {
+  width: 100%;
+  max-width: 950px;
+  padding: 20px 30px;
+  text-align: center;
+  background: linear-gradient(135deg, #668dc0, #2c2f36, #698ac3);
+
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  margin-bottom: 40px;
+  color: #ffffff;
+}
+
+.page-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.page-desc {
+  font-size: 1.08rem;
+  line-height: 1.5;
+  max-width: 700px;
+  margin: auto;
+  color: #d1d5db;
+}
+
+.admin-note {
+  background: #fff8e6;
+  color: #664d00;
+  width: 100%;
+  max-width: 900px;
+  padding: 16px 22px;
+  border-radius: 12px;
+  border-left: 6px solid #f59e0b;
+  margin-bottom: 35px;
+  font-size: 0.97rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.reg-container {
+  width: 100%;
+  max-width: 900px;
+  background: linear-gradient(180deg, #ffffff 0%, #cbdcfb 100%);
+  padding: 45px 40px;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  border-top: 6px solid #4338ca;
+  margin-bottom: 45px;
+}
+
+.reg-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000918;
+  margin-bottom: 10px;
+}
+
+.reg-sub-text {
+  color: #020b19;
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+.section-block {
+  padding: 18px 20px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 22px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+
+.reg-form .row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.field.full {
+  width: 100%;
+}
+
+.field label {
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  border: 1.7px solid #cbd5e1;
+  border-radius: 9px;
+  outline: none;
+  transition: 0.25s ease-in-out;
+  background: #f9fafb;
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+  border-color: #a5b4fc;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  background: #ffffff;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.note {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.reg-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #4338ca, #4f46e5);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.reg-btn:hover {
+  background: linear-gradient(90deg, #3b37b8, #1504d1);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 750px) {
+  .reg-form .row {
+    flex-direction: column;
+  }
+
+  .reg-container {
+    padding: 36px 28px;
+  }
+
+  .top-header {
+    padding: 16px 22px;
+  }
+}

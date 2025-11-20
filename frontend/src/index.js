@@ -1,11 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 
+// import App from './App';
+
+//  Current page you want to view
+//import Register from './organization/register';
+import AdminDashboard from './admin/pages/AdminDashboard'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+
+    {/* Replace this component anytime to view other pages */}
+    <AdminDashboard/>
+
+    {/* <App />  // ← uncomment this to go back to App.js */}
+
   </React.StrictMode>
 );

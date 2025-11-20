@@ -1,0 +1,191 @@
+/* src/styles/AdminDashboard.css */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--slate-mist);
+}
+
+.main-content {
+    margin-left: 260px; /* Matches Sidebar width */
+    flex: 1;
+    padding: 32px;
+}
+
+/* Header Area */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.header-title h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--void-navy);
+}
+
+.header-title p {
+    color: var(--gray-text);
+    margin: 4px 0 0 0;
+    font-size: 14px;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 350px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-text);
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-light);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: var(--nexa-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid transparent;
+}
+
+.stat-card.pending { border-left-color: var(--seal-gold); }
+.stat-card.approved { border-left-color: var(--success-green); }
+.stat-card.rejected { border-left-color: var(--danger-red); }
+
+.stat-label { color: var(--gray-text); font-size: 14px; font-weight: 500; }
+.stat-value { font-size: 32px; font-weight: 700; margin-top: 8px; color: var(--void-navy); }
+
+/* Table Section */
+.table-container {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden; /* Rounds corners of child elements */
+}
+
+.tabs-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-light);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--gray-text);
+    font-weight: 500;
+    text-transform: capitalize;
+    transition: all 0.2s;
+}
+
+.filter-tab.active {
+    background-color: var(--void-navy);
+    color: var(--white);
+}
+
+.org-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.org-table th {
+    background-color: #F9FAFB;
+    color: #64748B;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 16px 24px;
+}
+
+.org-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-light);
+    vertical-align: middle;
+}
+
+.org-table tr:last-child td { border-bottom: none; }
+.org-table tr:hover { background-color: var(--gray-hover); }
+
+/* Cell Specifics */
+.org-name { font-weight: 600; color: var(--void-navy); display: block; }
+.org-email { font-size: 13px; color: var(--gray-text); }
+.org-reg { font-size: 13px; font-weight: 500; }
+.industry-tag { 
+    background-color: #EFF6FF; color: var(--nexa-blue); 
+    font-size: 11px; padding: 2px 6px; border-radius: 4px; 
+}
+.doc-link {
+    color: var(--nexa-blue);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.status-badge.pending { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
+.status-badge.approved { background: #D1FAE5; color: #059669; border: 1px solid #A7F3D0; }
+.status-badge.rejected { background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; }
+
+/* Action Buttons */
+.action-btn {
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: transform 0.1s;
+    color: white;
+}
+.action-btn:active { transform: scale(0.95); }
+.btn-approve { background-color: var(--success-green); }
+.btn-reject { background-color: var(--danger-red); }
+.no-action { color: var(--gray-text); font-size: 13px; font-style: italic; }
