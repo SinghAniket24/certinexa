@@ -1,0 +1,140 @@
+/* src/recipient/Auth/RecipientAuth.css */
+
+:root {
+  /* Design System Palette */
+  --void-navy: #0F172A;    /* Sidebars, Text, Headers */
+  --nexa-blue: #3B82F6;    /* Primary Buttons, Links */
+  --chain-teal: #06B6D4;   /* Blockchain/Wallet Accents */
+  --seal-gold: #F59E0B;    /* Special Inputs like ID */
+  --slate-mist: #F8FAFC;   /* Main Background */
+  --success-green: #10B981;/* Success States */
+  --white: #FFFFFF;
+}
+
+/* Main Layout - Uses Slate Mist for background */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--slate-mist);
+  font-family: 'Inter', sans-serif; /* Assuming a standard sans-serif */
+  padding: 20px;
+}
+
+/* Card Styling */
+.auth-card {
+  background-color: var(--white);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+  width: 100%;
+  max-width: 450px;
+  border-top: 4px solid var(--void-navy); /* Solid security feel */
+}
+
+/* Headers */
+.auth-title {
+  color: var(--void-navy);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.auth-subtitle {
+  color: #64748B; /* Muted slate */
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+/* Form Structure */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  color: var(--void-navy);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Inputs */
+.form-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+  color: var(--void-navy);
+}
+
+.form-input:focus {
+  border-color: var(--nexa-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Specific Styling for Wallet Address - Chain Teal */
+.input-wallet {
+  border-left: 4px solid var(--chain-teal);
+}
+.input-wallet:focus {
+  border-color: var(--chain-teal);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+/* Specific Styling for Recipient ID - Seal Gold */
+.input-id:focus {
+  border-color: var(--seal-gold);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Button - Nexa Blue */
+.submit-btn {
+  background-color: var(--nexa-blue);
+  color: var(--white);
+  padding: 0.85rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  background-color: #2563EB; /* Slightly darker blue */
+}
+
+/* Toggle Text */
+.toggle-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #64748B;
+}
+
+.toggle-link {
+  color: var(--nexa-blue);
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+}

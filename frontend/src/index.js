@@ -6,15 +6,17 @@ import './index.css';
 
 //  Current page you want to view
 //import Register from './organization/register';
-import AdminDashboard from './admin/pages/AdminDashboard'
+import RecipientAuth from './recepient/Auth/RecepientAuth';
+//import AdminDashboard from './admin/pages/AdminDashboard'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
 
     {/* Replace this component anytime to view other pages */}
-    <AdminDashboard/>
+    <RecipientAuth/>
 
     {/* <App />  // ← uncomment this to go back to App.js */}
 
   </React.StrictMode>
 );
+
