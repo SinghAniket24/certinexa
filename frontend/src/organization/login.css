@@ -1,0 +1,190 @@
+/* GLOBAL FONT */
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+/* FULL PAGE LAYOUT */
+.login-digital-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  background: #F8FAFC; /* Slate Mist */
+  position: relative;
+}
+
+/* TOP LEFT CERTINEXA LOGO */
+.certinexa-logo {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #3B82F6; /* Nexa Blue */
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(59, 130, 246, 0.45);
+}
+
+/* LEFT SECTION */
+.digital-left {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* LOGIN CARD (White Neumorphic) */
+.digital-card {
+  width: 75%;
+  padding: 45px;
+  background: #ffffff;
+  border-radius: 28px;
+
+  box-shadow:
+    10px 10px 25px rgba(0, 0, 0, 0.12),
+    -10px -10px 25px rgba(255, 255, 255, 0.7);
+
+  transition: 0.3s ease;
+}
+
+.digital-card:hover {
+  transform: translateY(-5px);
+}
+
+/* TITLE */
+.digital-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #0F172A; /* Void Navy */
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* INPUT BOXES */
+.digital-input-box {
+  background: #F8FAFC; /* Slate Mist */
+  padding: 14px 18px;
+  border-radius: 20px;
+
+  box-shadow:
+    inset 4px 4px 12px rgba(0, 0, 0, 0.08),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.9);
+
+  margin-bottom: 20px;
+}
+
+.digital-input-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #0F172A;
+}
+
+.digital-input-box input:focus {
+  border-bottom: 2px solid #06B6D4; /* Chain Teal */
+}
+
+/* LOGIN BUTTON */
+.digital-login-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 22px;
+  font-size: 18px;
+  font-weight: 700;
+
+  background: #3B82F6; /* Nexa Blue */
+  border: none;
+  color: white;
+
+  box-shadow: 0px 6px 15px rgba(59, 130, 246, 0.45);
+
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.digital-login-btn:hover {
+  background: #2563EB; /* darker Nexa Blue */
+  transform: translateY(-3px);
+}
+
+/* FORGOT PASSWORD */
+.forgot-link {
+  text-align: center;
+  margin-top: 12px;
+  color: #F59E0B; /* Seal Gold */
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* RIGHT SIDE DIGITAL PANEL */
+.digital-right {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(
+    135deg,
+    #0F172A,   /* Void Navy */
+    #1E293B,
+    #3B82F6    /* Nexa Blue */
+  );
+}
+
+/* GLASS BOX */
+.right-glass-box {
+  width: 70%;
+  padding: 50px;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.right-glass-box h2 {
+  font-size: 40px;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.right-glass-box p {
+  font-size: 17px;
+  margin-bottom: 30px;
+  color: #F8FAFC;
+}
+
+/* SIGNUP BUTTON */
+.digital-signup-btn {
+  padding: 12px 35px;
+  background: #F59E0B; /* Seal Gold */
+  color: #0F172A;
+  border-radius: 25px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.digital-signup-btn:hover {
+  background: #f1a41c;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .login-digital-wrapper {
+    flex-direction: column;
+  }
+
+  .digital-left,
+  .digital-right {
+    width: 100%;
+    height: auto;
+    padding: 40px 20px;
+  }
+}
