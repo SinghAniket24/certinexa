@@ -1,26 +1,68 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const OrganizationSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  walletAddress: { type: String, required: true }, // The address verifying certs
-  industryType: { type: String, required: true }, // e.g., "Education"
-  
-  // Verification Details
-  documents: [{ type: String }], // Array of URL strings to uploaded files
-  verificationStatus: { 
-    type: String, 
-    enum: ['Pending', 'Verified', 'Rejected'], 
-    default: 'Pending' 
+const organizationSchema = new mongoose.Schema(
+  {
+    organizationName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    registrationNumber: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    organizationType: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    customType: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    officialEmail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    officialPhone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    walletAddress: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    verificationDocument: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    organizationAddress: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    verification_status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    verified_by: {
+      type: String, // storing admin ID as string for now
+      default: null,
+    },
   },
-  rejectionReason: { type: String }, // Populated only if Rejected
-  isVerified: { type: Boolean, default: false }, // Helper flag
-  
-  verifiedBy: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Admin' 
-  }
-}, { timestamps: true });
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Organization', OrganizationSchema);
+module.exports = mongoose.model("Organization", organizationSchema);
