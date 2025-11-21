@@ -17,10 +17,11 @@ app.use(express.json());
 
 // Import organization routes
 const organizationRoutes = require("./routes/organization");
+const organizationLoginRoutes = require("./routes/organizationlogin"); // new login route
 
-
+// Use routes
 app.use("/api/organization", organizationRoutes);
-
+app.use("/api/organization", organizationLoginRoutes); // mount login route
 
 app.get("/", (req, res) => {
   res.send("Server is running...");

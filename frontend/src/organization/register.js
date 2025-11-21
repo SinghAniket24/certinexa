@@ -220,6 +220,14 @@ export default function OrganizationRegister() {
           <button className="reg-btn" type="submit">
             Register
           </button>
+
+
+<div className="login-redirect-box">
+  Already have an account?{" "}
+  <span className="login-redirect-link" onClick={() => window.location.href = "/organization/login"}>
+    Login here
+  </span>
+</div>
         </form>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from './App';
 import Login from './organization/login';
 import Register from './organization/register';
-import RecipientAuth from './recepient/Auth/RecepientAuth';
+// import Register from './recepient/register';
 // import AdminDashboard from './admin/pages/AdminDashboard';
 // import AdminAuth from './admin/pages/AdminAuth';
 
@@ -33,7 +33,7 @@ root.render(
       </Routes>
 
     </BrowserRouter>
-
-  <RecipientAuth/>
+{/* 
+  <register/> */}
   </React.StrictMode>
 );

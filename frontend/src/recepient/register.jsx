@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './RecepientAuth.css'; 
+import './register.css'; 
 
 const RecipientAuth = () => {
   // State to toggle between Login and Register

@@ -188,3 +188,52 @@
     padding: 40px 20px;
   }
 }
+
+.login-success-msg {
+  color: #0f9d58;
+  background: rgba(15, 157, 88, 0.1);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-bottom: 12px;
+  text-align: center;
+  border: 1px solid #0f9d58;
+  animation: fadeSuccess 0.4s ease-in-out;
+}
+
+/* Smooth fade animation */
+@keyframes fadeSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.login-error-msg {
+  color: #d93025;
+  background: rgba(217, 48, 37, 0.15);
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 18px;          /* Bigger text */
+  font-weight: 600;         /* Bold */
+  text-align: center;
+  margin-bottom: 16px;
+  border: 2px solid #d93025;
+  letter-spacing: 0.5px;
+  animation: fadeError 0.4s ease-in-out;
+}
+
+/* Simple pop & fade */
+@keyframes fadeError {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

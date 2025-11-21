@@ -6,14 +6,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset previous error
     setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       const response = await fetch("http://localhost:5000/api/organization/login", {
@@ -25,10 +25,11 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // login successful
-        navigate("/dashboard"); // redirect to dashboard or desired page
+        setSuccessMessage("Login Successful!");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000); // gives time to show message
       } else {
-        // show error message
         setErrorMessage(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
@@ -39,20 +40,16 @@ export default function Login() {
 
   return (
     <div className="login-digital-wrapper">
-
-      {/* TOP LEFT LOGO TEXT */}
       <div className="certinexa-logo">CertiNexa</div>
 
-      {/* LEFT DIGITAL LOGIN CARD */}
       <div className="digital-left">
         <div className="digital-card">
-
           <h1 className="digital-title">Sign In</h1>
 
           {errorMessage && <p className="login-error-msg">{errorMessage}</p>}
+          {successMessage && <p className="login-success-msg">{successMessage}</p>}
 
           <form onSubmit={handleSubmit} className="digital-form">
-
             <div className="digital-input-box">
               <input
                 type="email"
@@ -79,11 +76,9 @@ export default function Login() {
 
             <p className="forgot-link">Forgot Password?</p>
           </form>
-
         </div>
       </div>
 
-      {/* RIGHT DIGITAL GLASS PANEL */}
       <div className="digital-right">
         <div className="right-glass-box">
           <h2>Secure Login for CertiNexa Team</h2>
@@ -95,7 +90,6 @@ export default function Login() {
           >
             Create Account
           </button>
-
         </div>
       </div>
     </div>
