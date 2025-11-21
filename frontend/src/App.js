@@ -4,6 +4,7 @@ import "./App.css";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import Login from "./organization/login";  
 import RecepientLogin from "./recepient/login";  // folder name is recepient
+import VerifierPortal from "./verification/verifier";
 
 export default function App() {
 
@@ -17,8 +18,9 @@ export default function App() {
     } else if (role === "recepient") { // match the spelling here
       navigate("/recepient/login"); 
     } else if (role === "verifier") {
-      console.log("Verifier portal clicked");
-    }
+  navigate("/verification/verifier");
+}
+
   };
 
   return (
@@ -73,6 +75,8 @@ export default function App() {
         {/* LOGIN PAGE ROUTE */}
         <Route path="/organization/login" element={<Login />} />
         <Route path="/recepient/login" element={<RecepientLogin />} />
+        <Route path="/verification/verifier" element={<VerifierPortal />} />
+
 
       </Routes>
     </>
