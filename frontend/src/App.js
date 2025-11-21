@@ -2,7 +2,8 @@ import React from "react";
 import { FaCertificate, FaUserGraduate, FaCheckCircle } from "react-icons/fa";
 import "./App.css";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import Login from "./organization/login";   // make sure this path is correct
+import Login from "./organization/login";  
+import RecepientLogin from "./recepient/login";  // folder name is recepient
 
 export default function App() {
 
@@ -13,6 +14,10 @@ export default function App() {
 
     if (role === "issuer") {
       navigate("/organization/login");
+    } else if (role === "recepient") { // match the spelling here
+      navigate("/recepient/login"); 
+    } else if (role === "verifier") {
+      console.log("Verifier portal clicked");
     }
   };
 
@@ -42,8 +47,8 @@ export default function App() {
                 </div>
 
                 <div
-                  className="role-card recipient"
-                  onClick={() => handleCardClick("recipient")}
+                  className="role-card recepient"  // match the spelling here
+                  onClick={() => handleCardClick("recepient")}
                 >
                   <FaUserGraduate className="card-icon" />
                   <h2>Recipient Portal</h2>
@@ -67,6 +72,8 @@ export default function App() {
 
         {/* LOGIN PAGE ROUTE */}
         <Route path="/organization/login" element={<Login />} />
+        <Route path="/recepient/login" element={<RecepientLogin />} />
+
       </Routes>
     </>
   );
