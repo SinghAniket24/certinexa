@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./register.css";
+import "./org_register.css";
 
 export default function OrganizationRegister() {
   const [organizationName, setOrganizationName] = useState("");

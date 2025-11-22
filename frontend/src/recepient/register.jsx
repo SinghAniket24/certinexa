@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiUser, FiMail, FiLock, FiCpu } from "react-icons/fi";
-import "./register.css";
+import "/home/aniket/Documents/certinexa/frontend/src/recepient/recepient_register.css";
 
 const RecipientRegister = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +11,8 @@ const RecipientRegister = () => {
     walletAddress: "",
   });
 
+  const [message, setMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -19,9 +21,28 @@ const RecipientRegister = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Registering:", formData);
+    setMessage("Registering...");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/recepient/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return setMessage(data.message || "Registration failed");
+      }
+
+      setMessage("Registration successful! You can now log in.");
+    } catch (error) {
+      console.error(error);
+      setMessage("Server error, please try again.");
+    }
   };
 
   return (
@@ -35,10 +56,9 @@ const RecipientRegister = () => {
             Securely access blockchain-verified certificates through CertiNexa.
           </p>
 
-          {/* FORM */}
-          <form className="reg-form" onSubmit={handleSubmit}>
+          {message && <p className="status-text">{message}</p>}
 
-            {/* Full Name */}
+          <form className="reg-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label">Full Name</label>
               <div className="input-wrapper">
@@ -55,7 +75,6 @@ const RecipientRegister = () => {
               </div>
             </div>
 
-            {/* Email */}
             <div className="form-group">
               <label className="form-label">Email Address</label>
               <div className="input-wrapper">
@@ -72,7 +91,6 @@ const RecipientRegister = () => {
               </div>
             </div>
 
-            {/* Password */}
             <div className="form-group">
               <label className="form-label">Password</label>
               <div className="input-wrapper">
@@ -89,7 +107,6 @@ const RecipientRegister = () => {
               </div>
             </div>
 
-            {/* Wallet Address */}
             <div className="form-group">
               <label className="form-label">
                 Wallet Address <span style={{ color: "#64748B" }}>(Optional)</span>
@@ -113,8 +130,10 @@ const RecipientRegister = () => {
           </form>
 
           <p className="toggle-text">
-            Already have an account? 
-            <Link to="/recipient/login" className="toggle-link">Login here</Link>
+            Already have an account?{' '}
+            <Link to="/recepient/login" className="toggle-link">
+              Login here
+            </Link>
           </p>
         </div>
       </div>

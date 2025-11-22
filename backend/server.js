@@ -13,15 +13,23 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
-// Import organization routes
+// Organization Routes
 const organizationRoutes = require("./routes/organization");
-const organizationLoginRoutes = require("./routes/organizationlogin"); // new login route
+const organizationLoginRoutes = require("./routes/organizationlogin");
 
-// Use routes
+// Recipient Routes
+const recepientRoutes = require("./routes/recepient");
+const recepientLoginRoutes = require("./routes/recepientlogin");
+
+// Use Organization Routes
 app.use("/api/organization", organizationRoutes);
-app.use("/api/organization", organizationLoginRoutes); // mount login route
+app.use("/api/organization", organizationLoginRoutes);
+
+// Use Recipient Routes
+app.use("/api/recepient", recepientRoutes);
+app.use("/api/recepient", recepientLoginRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running...");

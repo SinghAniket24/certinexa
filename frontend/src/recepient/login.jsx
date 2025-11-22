@@ -4,10 +4,13 @@ import { Link } from "react-router-dom";
 import './login.css';
 
 const RecipientLogin = () => {
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,16 +20,40 @@ const RecipientLogin = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logging in:", formData);
-    // Add Login API here
+    setMessage("Logging in...");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/recepient/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return setMessage(data.message || "Login failed");
+      }
+
+      // Save token
+      localStorage.setItem("recepientToken", data.token);
+
+      setMessage("Login successful!");
+
+      // No navigation added
+      // Just show success message
+
+    } catch (error) {
+      console.error(error);
+      setMessage("Server error, please try again.");
+    }
   };
 
   return (
     <div className="login-main">
 
-      {/* Top Left Branding */}
       <div className="brand-logo">Certinexa</div>
 
       <div className="login-container">
@@ -34,6 +61,8 @@ const RecipientLogin = () => {
 
           <h2 className="login-title">Recipient Login</h2>
           <p className="login-subtitle">Access your certifications securely</p>
+
+          {message && <p className="status-text">{message}</p>}
 
           <form onSubmit={handleSubmit}>
             
