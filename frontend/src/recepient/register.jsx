@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiUser, FiMail, FiLock, FiCpu } from "react-icons/fi";
-import "/home/aniket/Documents/certinexa/frontend/src/recepient/recepient_register.css";
+import './recepient_register.css';
 
 const RecipientRegister = () => {
   const [formData, setFormData] = useState({
