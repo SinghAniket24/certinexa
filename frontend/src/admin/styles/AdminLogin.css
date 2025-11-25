@@ -1,0 +1,114 @@
+/* ==== CERTINEXA COLORS ==== */
+:root {
+  --void-navy: #0F172A;
+  --nexa-blue: #3B82F6;
+  --chain-teal: #06B6D4;
+  --seal-gold: #F59E0B;
+  --slate-mist: #F8FAFC;
+  --success-green: #10B981;
+  --text-light: #F8FAFC;
+  --text-muted: #94A3B8;
+}
+
+/* ==== PAGE WRAPPER ==== */
+.auth-page-container {
+  background-color: var(--slate-mist);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==== CARD ==== */
+.auth-card {
+  background-color: var(--void-navy);
+  color: var(--text-light);
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ==== HEADER ==== */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-header .highlight {
+  color: var(--seal-gold);
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ==== FORM FIELDS ==== */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--nexa-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* ==== BUTTON ==== */
+.auth-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: var(--nexa-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 1rem;
+}
+
+.auth-btn:hover {
+  background-color: #2563EB;
+}
+
+/* ==== ERROR BOX ==== */
+.error-box {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}

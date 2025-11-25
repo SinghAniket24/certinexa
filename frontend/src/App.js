@@ -2,9 +2,11 @@ import React from "react";
 import { FaCertificate, FaUserGraduate, FaCheckCircle } from "react-icons/fa";
 import "./App.css";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import Login from "./organization/login";  
+import Login from "./organization/login";
 import RecepientLogin from "./recepient/login";  // folder name is recepient
 import VerifierPortal from "./verification/verifier";
+import AdminLogin from "./admin/pages/AdminLogin";
+import AdminDashboard from "./admin/pages/AdminDashboard";
 
 export default function App() {
 
@@ -16,10 +18,10 @@ export default function App() {
     if (role === "issuer") {
       navigate("/organization/login");
     } else if (role === "recepient") { // match the spelling here
-      navigate("/recepient/login"); 
+      navigate("/recepient/login");
     } else if (role === "verifier") {
-  navigate("/verification/verifier");
-}
+      navigate("/verification/verifier");
+    }
 
   };
 
@@ -76,8 +78,8 @@ export default function App() {
         <Route path="/organization/login" element={<Login />} />
         <Route path="/recepient/login" element={<RecepientLogin />} />
         <Route path="/verification/verifier" element={<VerifierPortal />} />
-
-
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard"element={<AdminDashboard />}/>
       </Routes>
     </>
   );

@@ -1,9 +1,23 @@
 import React from 'react';
 import { LayoutDashboard, Users, FileCheck, Settings, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 // IMPORT EXTERNAL CSS
 import '../styles/variables.css';
 import '../styles/Sidebar.css';
+
 const Sidebar = ({ activeTab, setActiveTab }) => {
+  const navigate = useNavigate(); // 2. Initialize the hook
+
+  // 3. Define the Logout Function
+  const handleLogout = () => {
+    // Clear the stored data
+    localStorage.removeItem('token');
+    localStorage.removeItem('admin');
+    
+    // Redirect to the Admin Login page (or Home)
+    navigate('/admin'); 
+  };
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { id: 'organizations', label: 'Organizations', icon: <Users size={20} /> },
@@ -35,7 +49,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
       {/* Footer / Logout */}
       <div className="sidebar-footer">
-        <button className="nav-item logout-btn">
+        {/* 4. Attach the click handler here */}
+        <button className="nav-item logout-btn" onClick={handleLogout}>
           <LogOut size={20} />
           <span>Logout</span>
         </button>

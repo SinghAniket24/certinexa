@@ -1,0 +1,36 @@
+@import './AdminLogin.css';
+
+/* ===== EXTRA FIELD STYLE FOR SIGNUP ===== */
+
+.wallet-field {
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.wallet-field:focus {
+  border-color: var(--chain-teal);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
+}
+
+/* ===== ROLE DROPDOWN ===== */
+select.form-input {
+  cursor: pointer;
+}
+
+/* ===== SWITCH LINK (Login <-> Signup) ===== */
+.toggle-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.toggle-link {
+  color: var(--nexa-blue);
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+}
