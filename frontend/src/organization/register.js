@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./org_register.css";
-
 export default function OrganizationRegister() {
   const [organizationName, setOrganizationName] = useState("");
   const [registrationNumber, setRegistrationNumber] = useState("");
@@ -89,8 +88,8 @@ export default function OrganizationRegister() {
         </div>
       )}
 
-      <div className="reg-container">
-        <h2 className="reg-heading">Register Your Organization</h2>
+      <div className="reg-containers">
+        <h2 className="reg-headings">Register Your Organization</h2>
         <p className="reg-sub-text">
           Enter accurate information to help us verify your organization smoothly.
         </p>
@@ -222,12 +221,12 @@ export default function OrganizationRegister() {
           </button>
 
 
-<div className="login-redirect-box">
-  Already have an account?{" "}
-  <span className="login-redirect-link" onClick={() => window.location.href = "/organization/login"}>
-    Login here
-  </span>
-</div>
+          <div className="login-redirect-box">
+            Already have an account?{" "}
+            <span className="login-redirect-link" onClick={() => window.location.href = "/organization/login"}>
+              Login here
+            </span>
+          </div>
         </form>
       </div>
     </div>
