@@ -3,9 +3,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// ==========================================
 // IMPORT MODELS
+// ==========================================
 const Admin = require('../models/admin/admin'); 
-const Organization = require('../models/organization/organization'); // Assumes saved in models/organization.js
+const Organization = require('../models/organization/organization');
+
+// ==========================================
+// IMPORT DIGITAL SIGNATURE KEY GENERATOR
+// ==========================================
+const generateOrgKeys = require('../digitalSignature/keyGenerator');
 
 // ==========================================
 // AUTHENTICATION ROUTES
@@ -17,17 +24,17 @@ router.post('/register', async (req, res) => {
   try {
     const { username, email, password, walletAddress, role } = req.body;
 
-    // 1. Check if Admin already exists
+    // Check if admin already exists
     const existingAdmin = await Admin.findOne({ email });
     if (existingAdmin) {
       return res.status(400).json({ message: "Admin with this email already exists." });
     }
 
-    // 2. Hash the password
+    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. Create new Admin
+    // Create new admin
     const newAdmin = new Admin({
       username,
       email,
@@ -36,7 +43,6 @@ router.post('/register', async (req, res) => {
       role
     });
 
-    // 4. Save to MongoDB
     await newAdmin.save();
 
     res.status(201).json({ message: "Admin registered successfully" });
@@ -53,22 +59,22 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Check if user exists
+    // Check if admin exists
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(404).json({ message: "Admin not found." });
     }
 
-    // 2. Validate Password
+    // Validate password
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials." });
     }
 
-    // 3. Generate JWT Token
+    // Generate JWT token
     const token = jwt.sign(
-      { id: admin._id, role: admin.role }, 
-      'certinexa_key', 
+      { id: admin._id, role: admin.role },
+      'certinexa_key', // You can move this to process.env.JWT_SECRET for better security
       { expiresIn: '1d' }
     );
 
@@ -94,10 +100,9 @@ router.post('/login', async (req, res) => {
 // ==========================================
 
 // @route   GET /api/admin/organizations
-// @desc    Get all organizations for the dashboard table
+// @desc    Get all organizations for the dashboard
 router.get('/organizations', async (req, res) => {
   try {
-    // Fetch all docs, newest first
     const organizations = await Organization.find().sort({ createdAt: -1 });
     res.status(200).json(organizations);
   } catch (error) {
@@ -113,28 +118,45 @@ router.put('/organization/:id/status', async (req, res) => {
     const { status } = req.body; // Expecting 'approved' or 'rejected'
     const orgId = req.params.id;
 
-    // Validate Status
+    // Validate status
     if (!['pending', 'approved', 'rejected'].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    // Update the 'verification_status' field
+    // Update verification_status in MongoDB
     const updatedOrg = await Organization.findByIdAndUpdate(
       orgId,
-      { 
-        verification_status: status,
-        // Optional: If you want to track who verified it, pass req.user.id here if using auth middleware
-      }, 
-      { new: true } // Return updated document
+      { verification_status: status },
+      { new: true }
     );
 
     if (!updatedOrg) {
       return res.status(404).json({ message: "Organization not found" });
     }
 
-    res.status(200).json({ 
-      message: `Organization ${status} successfully`, 
-      org: updatedOrg 
+    // -----------------------
+    // KEY GENERATION ON APPROVAL
+    // -----------------------
+    if (status === "approved") {
+      try {
+        // Generate public/private key pair and store securely
+        await generateOrgKeys(orgId);
+
+
+        // TODO: SEND APPROVAL EMAIL
+
+      } catch (keyErr) {
+        console.error("Key Generation Error:", keyErr);
+        return res.status(500).json({ message: "Organization approved, but key generation failed." });
+      }
+    }
+
+    // -----------------------
+    // TODO: SEND REJECTION EMAIL
+  
+    res.status(200).json({
+      message: `Organization ${status} successfully`,
+      org: updatedOrg
     });
 
   } catch (error) {
