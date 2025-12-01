@@ -13,6 +13,7 @@ const Organization = require('../models/organization/organization');
 // IMPORT DIGITAL SIGNATURE KEY GENERATOR
 // ==========================================
 const generateOrgKeys = require('../digitalSignature/keyGenerator');
+const { sendStatusEmail } = require('../utils/emailService'); // <--- IMPORTED HERE
 
 // ==========================================
 // AUTHENTICATION ROUTES
@@ -133,26 +134,36 @@ router.put('/organization/:id/status', async (req, res) => {
     if (!updatedOrg) {
       return res.status(404).json({ message: "Organization not found" });
     }
-
-    // -----------------------
-    // KEY GENERATION ON APPROVAL
+// -----------------------
+    // ACTION: APPROVED
     // -----------------------
     if (status === "approved") {
       try {
-        // Generate public/private key pair and store securely
+        // 1. Generate keys
         await generateOrgKeys(orgId);
 
-
-        // TODO: SEND APPROVAL EMAIL
+        // 2. Send Approval Email
+        // We don't await this to keep the response fast, or we can await to ensure delivery
+        await sendStatusEmail(updatedOrg, 'verified'); 
 
       } catch (keyErr) {
-        console.error("Key Generation Error:", keyErr);
+        console.error("Key Generation/Email Error:", keyErr);
+        // Note: We don't fail the request if email fails, but we log it
         return res.status(500).json({ message: "Organization approved, but key generation failed." });
       }
     }
 
     // -----------------------
-    // TODO: SEND REJECTION EMAIL
+    // ACTION: REJECTED
+    // -----------------------
+    if (status === "rejected") {
+       try {
+         // Send Rejection Email with reason
+         await sendStatusEmail(updatedOrg, 'rejected', rejectionReason);
+       } catch (emailErr) {
+         console.error("Email Sending Error:", emailErr);
+       }
+    }
   
     res.status(200).json({
       message: `Organization ${status} successfully`,
