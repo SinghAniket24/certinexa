@@ -27,7 +27,8 @@ export default function Login() {
       if (response.ok) {
         setSuccessMessage("Login Successful!");
         setTimeout(() => {
-          navigate("/dashboard");
+          // Redirect to organization dashboard after successful login
+          navigate("/organization/organization_dashboard");
         }, 1000); // gives time to show message
       } else {
         setErrorMessage(data.message || "Login failed. Please try again.");

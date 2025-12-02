@@ -7,6 +7,7 @@ import RecepientLogin from "./recepient/login";  // folder name is recepient
 import VerifierPortal from "./verification/verifier";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminDashboard from "./admin/pages/AdminDashboard";
+import OrganizationDashboard from "./organization/organization_dashboard";
 
 export default function App() {
 
@@ -80,6 +81,7 @@ export default function App() {
         <Route path="/verification/verifier" element={<VerifierPortal />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard"element={<AdminDashboard />}/>
+        <Route path="/organization_dashboard" element={<OrganizationDashboard />} />
       </Routes>
     </>
   );

@@ -1,0 +1,212 @@
+:root {
+  --bg-dark: #0f172a;
+  --bg-light: #f8fafc;
+  --white: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+}
+
+.mt-wrap {
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-main);
+}
+
+.mt-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: var(--text-main);
+}
+
+.mt-empty {
+  text-align: center;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+.mt-empty span {
+  display: block;
+  margin-top: 6px;
+  color: var(--primary);
+}
+
+/* Grid */
+.mt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.mt-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mt-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.mt-card-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.mt-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.mt-card-icon {
+  cursor: pointer;
+  color: var(--danger);
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.mt-card-icon:hover {
+  color: darkred;
+}
+
+.mt-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--text-main);
+}
+
+/* Field chips */
+.mt-field-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.mt-chip {
+  background: var(--bg-light);
+  color: var(--text-muted);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* View button */
+.mt-btn-view {
+  background: var(--primary);
+  color: var(--white);
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.mt-btn-view:hover {
+  background: var(--primary-hover);
+}
+
+/* Modal */
+.mt-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15,23,42,0.6); /* semi-dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.mt-modal-content {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.mt-fields-list {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mt-field-row {
+  display: flex;
+  justify-content: space-between;
+  background: var(--bg-light);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.mt-field-label {
+  font-weight: 500;
+  flex: 2;
+}
+
+.mt-field-type {
+  flex: 1;
+  text-align: center;
+}
+
+.mt-field-req {
+  flex: 1;
+  text-align: right;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.mt-btn-close {
+  margin-top: 20px;
+  background: var(--text-muted);
+  color: var(--white);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mt-btn-close:hover {
+  background: #4b5563;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mt-card-header {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
