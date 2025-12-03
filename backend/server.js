@@ -23,8 +23,11 @@ const organizationLoginRoutes = require("./routes/organizationlogin");
 const recepientRoutes = require("./routes/recepient");
 const recepientLoginRoutes = require("./routes/recepientlogin");
 
-//Admin Routes
+// Admin Routes
 const adminRoutes = require('./routes/adminRoutes');
+
+// Template Routes
+const templateRoutes = require("./routes/template");
 
 // Use Organization Routes
 app.use("/api/organization", organizationRoutes);
@@ -34,8 +37,11 @@ app.use("/api/organization", organizationLoginRoutes);
 app.use("/api/recepient", recepientRoutes);
 app.use("/api/recepient", recepientLoginRoutes);
 
-//Use Admin Routes
+// Use Admin Routes
 app.use('/api/admin', adminRoutes);
+
+// Use Template Routes
+app.use("/api/template", templateRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running...");

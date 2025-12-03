@@ -6,6 +6,8 @@ export default function CreateTemplate({ onSaved }) {
   const [fields, setFields] = useState([]);
   const [message, setMessage] = useState("");
 
+  const token = localStorage.getItem("org_token"); // get JWT
+
   useEffect(() => {
     setFields(prev => {
       const hasEmail = prev.some(f => f.key === "email");
@@ -50,28 +52,42 @@ export default function CreateTemplate({ onSaved }) {
     return true;
   };
 
-  const saveTemplate = () => {
+  const saveTemplate = async () => {
     if (!validate()) return;
 
     const template = {
-      id: `tmpl_${Date.now()}`,
-      name: templateName.trim(),
+      templateName: templateName.trim(),
       fields: fields.map(f => ({ label: f.label.trim(), type: f.type, required: !!f.required }))
     };
 
-    // Save to localStorage
-    const savedTemplates = JSON.parse(localStorage.getItem("templates_db") || "[]");
-    localStorage.setItem("templates_db", JSON.stringify([...savedTemplates, template]));
+    try {
+      const response = await fetch("http://localhost:5000/api/template/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` // send JWT
+        },
+        body: JSON.stringify(template)
+      });
 
-    console.log("Saved Template:", template);
-    setMessage("Template saved successfully!");
+      const data = await response.json();
+      if (response.ok) {
+        setMessage("Template saved successfully!");
+        console.log("Saved Template:", data.template);
 
-    // Trigger callback if provided
-    if (typeof onSaved === "function") onSaved(template);
+        // trigger callback if provided
+        if (typeof onSaved === "function") onSaved(data.template);
 
-    // Optional: reset form
-    setTemplateName("");
-    setFields([{ key: "email", label: "Email", type: "email", required: true }]);
+        // reset form
+        setTemplateName("");
+        setFields([{ key: "email", label: "Email", type: "email", required: true }]);
+      } else {
+        setMessage(data.message || "Failed to save template.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error. Try again later.");
+    }
   };
 
   return (

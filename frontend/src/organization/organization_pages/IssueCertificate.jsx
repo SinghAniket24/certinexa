@@ -5,18 +5,34 @@ export default function IssueCertificate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({});
+  const token = localStorage.getItem("org_token"); // JWT
 
-  // Fetch templates from localStorage (simulate for now)
+  // Fetch templates from backend
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("templates_db") || "[]");
-    setTemplates(saved);
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/template/list", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setTemplates(data.templates || []);
+        } else {
+          console.error(data.message || "Failed to fetch templates");
+        }
+      } catch (err) {
+        console.error("Error fetching templates:", err);
+      }
+    };
+
+    fetchTemplates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTemplateSelect = (templateId) => {
-    const template = templates.find(t => t.id === templateId);
+    const template = templates.find(t => t._id === templateId);
     setSelectedTemplate(template);
 
-    // Initialize formData with empty values
     if (template) {
       const initialData = {};
       template.fields.forEach(f => {
@@ -41,22 +57,19 @@ export default function IssueCertificate() {
       return;
     }
 
-    // Create certificate object
     const newCert = {
-      id: Date.now(), // unique id
-      templateName: selectedTemplate.name,
+      id: Date.now(),
+      templateName: selectedTemplate.templateName,
       fields: formData,
       issuedAt: new Date().toISOString()
     };
 
-    // Fetch existing issued certificates
     const existing = JSON.parse(localStorage.getItem("issued_certificates") || "[]");
     existing.push(newCert);
     localStorage.setItem("issued_certificates", JSON.stringify(existing));
 
     alert("Certificate issued and saved locally!");
 
-    // Reset form
     setSelectedTemplate(null);
     setFormData({});
   };
@@ -66,9 +79,7 @@ export default function IssueCertificate() {
       <h2 className="ic-title">Issue Certificate</h2>
 
       {templates.length === 0 ? (
-        <div className="ic-empty">
-          No templates available. Create one first.
-        </div>
+        <div className="ic-empty">No templates available. Create one first.</div>
       ) : (
         <div className="ic-content">
           {!selectedTemplate ? (
@@ -77,7 +88,7 @@ export default function IssueCertificate() {
               <select onChange={(e) => handleTemplateSelect(e.target.value)} defaultValue="">
                 <option value="" disabled>-- Choose Template --</option>
                 {templates.map(t => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
+                  <option key={t._id} value={t._id}>{t.templateName}</option>
                 ))}
               </select>
             </div>
@@ -87,7 +98,7 @@ export default function IssueCertificate() {
                 <div className="ic-form-group" key={idx}>
                   <label>{f.label}{f.label === "Email" ? " *" : ""}</label>
                   <input
-                    type="text"
+                    type={f.type || "text"}
                     value={formData[f.label] || ""}
                     onChange={(e) => handleChange(e, f.label)}
                     required={f.label === "Email"}
@@ -95,7 +106,6 @@ export default function IssueCertificate() {
                   />
                 </div>
               ))}
-
               <button type="submit" className="ic-btn-submit">Issue Certificate</button>
             </form>
           )}

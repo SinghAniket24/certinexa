@@ -16,20 +16,27 @@ export default function Login() {
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/organization/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/organization/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
+        // ---- SAVE TOKEN + ORG INFO ----
+        localStorage.setItem("org_token", data.token);
+        localStorage.setItem("org_details", JSON.stringify(data.organization));
+
         setSuccessMessage("Login Successful!");
+
         setTimeout(() => {
-          // Redirect to organization dashboard after successful login
           navigate("/organization/organization_dashboard");
-        }, 1000); // gives time to show message
+        }, 1000);
       } else {
         setErrorMessage(data.message || "Login failed. Please try again.");
       }
@@ -48,7 +55,9 @@ export default function Login() {
           <h1 className="digital-title">Sign In</h1>
 
           {errorMessage && <p className="login-error-msg">{errorMessage}</p>}
-          {successMessage && <p className="login-success-msg">{successMessage}</p>}
+          {successMessage && (
+            <p className="login-success-msg">{successMessage}</p>
+          )}
 
           <form onSubmit={handleSubmit} className="digital-form">
             <div className="digital-input-box">
