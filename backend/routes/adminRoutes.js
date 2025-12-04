@@ -193,3 +193,4 @@ router.put('/organization/:id/status', async (req, res) => {
     res.status(500).json({ message: "Error updating status" });
   }
 });
+module.exports = router;
