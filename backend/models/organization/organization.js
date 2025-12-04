@@ -61,6 +61,11 @@ const organizationSchema = new mongoose.Schema(
       type: String, // storing admin ID as string for now
       default: null,
     },
+    rejection_reason: {
+      type: String,
+      default: "",
+      trim:true
+    },
   },
   { timestamps: true }
 );

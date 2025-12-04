@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import { Search, CheckCircle, XCircle, Clock, Filter, Eye } from 'lucide-react';
-// IMPORT EXTERNAL CSS
+import OrganizationDetails from './OrganizationDetails';
 import '../styles/variables.css';
 import '../styles/AdminDashboard.css';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('organizations');
-    const [organizations, setOrganizations] = useState([]); // Default to empty array
+    const [organizations, setOrganizations] = useState([]); 
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [loading, setLoading] = useState(true); // Added loading state
+    const [loading, setLoading] = useState(true);
+    const [selectedOrg, setSelectedOrg] = useState(null);
 
     // 1. FETCH DATA ON MOUNT
     useEffect(() => {
@@ -31,14 +32,40 @@ const AdminDashboard = () => {
         }
     };
 
-    // 2. HANDLE STATUS UPDATE (Approve/Reject)
-    const handleStatusChange = async (id, newStatus) => {
-        // Optimistic UI Update (Update UI immediately for better UX)
-        const previousOrgs = [...organizations];
-        const updatedOrgs = organizations.map(org =>
-            org._id === id ? { ...org, verification_status: newStatus } : org
+    // 2. HELPER: PURE LOCAL STATE UPDATE 
+    // This updates the UI without calling the API (Used by Modal)
+    const updateLocalState = (id, newStatus, rejectionReason = null) => {
+        setOrganizations(prevOrgs => 
+            prevOrgs.map(org => {
+                if (org._id === id) {
+                    return { 
+                        ...org, 
+                        verification_status: newStatus,
+                        // Update reason if provided, otherwise keep existing
+                        rejection_reason: rejectionReason || org.rejection_reason 
+                    };
+                }
+                return org;
+            })
         );
-        setOrganizations(updatedOrgs);
+
+        // Also update the selectedOrg if it is currently open, 
+        // so the banner updates instantly if we don't close the modal
+        if (selectedOrg && selectedOrg._id === id) {
+            setSelectedOrg(prev => ({
+                ...prev, 
+                verification_status: newStatus,
+                rejection_reason: rejectionReason || prev.rejection_reason
+            }));
+        }
+    };
+
+    // 3. HANDLE TABLE BUTTON CLICKS (Approve/Reject from Table)
+    // This performs the API call because the Table Buttons don't have their own logic
+    const handleStatusChange = async (id, newStatus) => {
+        // Optimistic UI Update
+        const previousOrgs = [...organizations];
+        updateLocalState(id, newStatus);
 
         try {
             const response = await fetch(`http://localhost:5000/api/admin/organization/${id}/status`, {
@@ -58,7 +85,7 @@ const AdminDashboard = () => {
         }
     };
 
-    // 3. FILTER LOGIC
+    // 4. FILTER LOGIC
     const filteredOrgs = organizations.filter(org => {
         // Match status (using verification_status)
         const matchesStatus = filterStatus === 'all' || org.verification_status === filterStatus;
@@ -155,46 +182,53 @@ const AdminDashboard = () => {
                             </thead>
                             <tbody>
                                 {filteredOrgs.length > 0 ? filteredOrgs.map((org) => (
-                                    <tr key={org._id}>
+                                    <tr 
+                                        key={org._id} 
+                                        onClick={() => setSelectedOrg(org)} 
+                                        style={{ cursor: 'pointer', transition: 'background 0.2s' }}
+                                        className="org-row"
+                                    >
                                         <td>
-                                            {/* Corrected Field: organizationName */}
                                             <span className="org-name">{org.organizationName}</span>
-                                            {/* Corrected Field: officialEmail */}
                                             <span className="org-email">{org.officialEmail}</span>
                                         </td>
                                         <td>
                                             <div className="org-reg">{org.registrationNumber}</div>
-                                            {/* Corrected Field: organizationType */}
                                             <span className="industry-tag">{org.organizationType}</span>
                                         </td>
                                         <td>
-                                            {/* Document Link */}
                                             <a 
                                                 href={org.verificationDocument} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
                                                 className="doc-link"
+                                                onClick={(e) => e.stopPropagation()} 
                                                 style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px', border: 'none', background: 'none' }}
                                             >
                                                 <Eye size={14} /> View Docs
                                             </a>
                                         </td>
                                         <td>
-                                            {/* Corrected Field: verification_status */}
                                             {getStatusBadge(org.verification_status)}
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             {org.verification_status === 'pending' ? (
                                                 <>
                                                     <button
-                                                        onClick={() => handleStatusChange(org._id, 'approved')}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); 
+                                                            handleStatusChange(org._id, 'approved');
+                                                        }}
                                                         className="action-btn btn-approve"
                                                         title="Approve"
                                                     >
                                                         <CheckCircle size={18} />
                                                     </button>
                                                     <button
-                                                        onClick={() => handleStatusChange(org._id, 'rejected')}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); 
+                                                            handleStatusChange(org._id, 'rejected');
+                                                        }}
                                                         className="action-btn btn-reject"
                                                         title="Reject"
                                                     >
@@ -218,6 +252,16 @@ const AdminDashboard = () => {
                     )}
                 </div>
             </main>
+            
+            {/* MODAL INTEGRATION */}
+            {selectedOrg && (
+                <OrganizationDetails 
+                    org={selectedOrg} 
+                    onClose={() => setSelectedOrg(null)} 
+                    onUpdateStatus={updateLocalState} // Pass the PURE updater, not the API one
+                />
+            )}
+            
         </div>
     );
 };

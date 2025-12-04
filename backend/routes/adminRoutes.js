@@ -13,7 +13,7 @@ const Organization = require('../models/organization/organization');
 // IMPORT DIGITAL SIGNATURE KEY GENERATOR
 // ==========================================
 const generateOrgKeys = require('../digitalSignature/keyGenerator');
-const { sendStatusEmail } = require('../utils/emailService'); // <--- IMPORTED HERE
+const { sendStatusEmail } = require('../utils/emailService'); 
 
 // ==========================================
 // AUTHENTICATION ROUTES
@@ -75,7 +75,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { id: admin._id, role: admin.role },
-      'certinexa_key', // You can move this to process.env.JWT_SECRET for better security
+      'certinexa_key', 
       { expiresIn: '1d' }
     );
 
@@ -116,7 +116,8 @@ router.get('/organizations', async (req, res) => {
 // @desc    Update organization verification_status (Approve/Reject)
 router.put('/organization/:id/status', async (req, res) => {
   try {
-    const { status } = req.body; // Expecting 'approved' or 'rejected'
+    // 1. Extract rejectionReason from body
+    const { status, rejectionReason } = req.body; 
     const orgId = req.params.id;
 
     // Validate status
@@ -124,17 +125,26 @@ router.put('/organization/:id/status', async (req, res) => {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    // Update verification_status in MongoDB
+    // 2. Prepare the update object
+    const updateData = { verification_status: status };
+    
+    // Only save the rejection reason if status is 'rejected'
+    if (status === 'rejected') {
+        updateData.rejection_reason = rejectionReason;
+    }
+
+    // 3. Update in MongoDB
     const updatedOrg = await Organization.findByIdAndUpdate(
       orgId,
-      { verification_status: status },
+      updateData,
       { new: true }
     );
 
     if (!updatedOrg) {
       return res.status(404).json({ message: "Organization not found" });
     }
-// -----------------------
+
+    // -----------------------
     // ACTION: APPROVED
     // -----------------------
     if (status === "approved") {
@@ -143,12 +153,10 @@ router.put('/organization/:id/status', async (req, res) => {
         await generateOrgKeys(orgId);
 
         // 2. Send Approval Email
-        // We don't await this to keep the response fast, or we can await to ensure delivery
         await sendStatusEmail(updatedOrg, 'verified'); 
 
       } catch (keyErr) {
         console.error("Key Generation/Email Error:", keyErr);
-        // Note: We don't fail the request if email fails, but we log it
         return res.status(500).json({ message: "Organization approved, but key generation failed." });
       }
     }
