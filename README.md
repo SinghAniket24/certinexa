@@ -1,4 +1,3 @@
-
 # CertiNexa - Blockchain Certificate System
 
 CertiNexa is a decentralized application that allows organizations to issue, manage, and verify digital certificates on the blockchain. It provides a secure and tamper-proof way to store and share certificates, eliminating the need for traditional paper-based certificates.
@@ -15,7 +14,8 @@ The project is divided into three main folders:
 
 The frontend is a React application that provides a user interface for interacting with the CertiNexa platform. It has different portals for different user roles:
 
-- **Issuer Portal:** For organizations to issue and manage certificates.
+- **Admin Portal:** For managing organizations and system settings.
+- **Organization Portal:** For organizations to issue and manage certificates.
 - **Recipient Portal:** For users to view and manage their certificates.
 - **Verifier Portal:** For anyone to verify the authenticity of a certificate.
 
@@ -34,11 +34,19 @@ frontend/
     │   ├── pages/
     │   │   ├── AdminDashboard.jsx
     │   │   ├── AdminLogin.jsx
-    │   │   └── AdminSignup.jsx
+    │   │   ├── AdminSignup.jsx
+    │   │   └── OrganizationDetails.jsx
     │   └── styles/
     │       └── ...
     ├── organization/
     │   ├── login.js
+    │   ├── organization_dashboard.jsx
+    │   ├── organization_pages/
+    │   │   ├── CreateTemplate.jsx
+    │   │   ├── IssueCertificate.jsx
+    │   │   ├── ManageTemplates.jsx
+    │   │   ├── Profile.jsx
+    │   │   └── ViewCertificates.jsx
     │   └── register.js
     ├── recepient/
     │   ├── login.jsx
@@ -70,15 +78,19 @@ backend/
 │   ├── certificate/
 │   │   └── certificate.js
 │   ├── organization/
-│   │   └── organization.js
+│   │   ├── organization.js
+│   │   └── template.js
 │   └── recepient/
 │       └── recepient.js
-└── routes/
-    ├── adminRoutes.js
-    ├── organization.js
-    ├── organizationlogin.js
-    ├── recepient.js
-    └── recepientlogin.js
+├── routes/
+│   ├── adminRoutes.js
+│   ├── organization.js
+│   ├── organizationlogin.js
+│   ├── recepient.js
+│   ├── recepientlogin.js
+│   └── template.js
+└── utils/
+    └── emailService.js
 ```
 
 ### Blockchain
@@ -94,18 +106,78 @@ blockchain/
 ├── ignition/
 │   └── modules/
 │       └── CertificateRegistry.ts
-└── test/
-    └── CertificateRegistry.test.ts
+├── test/
+│   └── CertificateRegistry.test.ts
+└── typechain-types/
 ```
 
+## Prerequisites
 
-### Prerequisites
-
-- Node.js
-- npm
+- Node.js (v16 or higher)
+- npm (v8 or higher)
 - Hardhat
 - MongoDB
 
+## Installation
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/your-username/certinexa.git
+    cd certinexa
+    ```
+
+2.  **Install backend dependencies:**
+
+    ```bash
+    cd backend
+    npm install
+    ```
+
+3.  **Install frontend dependencies:**
+
+    ```bash
+    cd ../frontend
+    npm install
+    ```
+
+4.  **Install blockchain dependencies:**
+
+    ```bash
+    cd ../blockchain
+    npm install
+    ```
+
+## Running the Application
+
+1.  **Start the MongoDB database:**
+
+    Make sure you have MongoDB installed and running on your local machine.
+
+2.  **Deploy the smart contract:**
+
+    ```bash
+    cd blockchain
+    npx hardhat run ignition/modules/CertificateRegistry.ts --network localhost
+    ```
+
+3.  **Start the backend server:**
+
+    ```bash
+    cd ../backend
+    npm start
+    ```
+
+    The backend server will be running on `http://localhost:5000`.
+
+4.  **Start the frontend application:**
+
+    ```bash
+    cd ../frontend
+    npm start
+    ```
+
+    The frontend application will be running on `http://localhost:3000`.
 
 ## Backend API
 
@@ -119,9 +191,14 @@ The backend API provides the following routes:
 - **Organization:**
     - `POST /api/organization/register`: Register a new organization.
     - `POST /api/organization/login`: Login an organization.
+    - `POST /api/organization/template`: Create a new certificate template.
+    - `GET /api/organization/templates`: Get all certificate templates for an organization.
 - **Recipient:**
     - `POST /api/recepient/register`: Register a new recipient.
     - `POST /api/recepient/login`: Login a recipient.
+- **Certificate:**
+    - `POST /api/certificate/issue`: Issue a new certificate.
+    - `GET /api/certificate/:id`: Get a certificate by its ID.
 
 ## Blockchain Smart Contract
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ExternalLink, CheckCircle, XCircle, AlertTriangle, FileText, MapPin, Mail, Phone, Hash, Calendar } from 'lucide-react';
-import '../styles/OrganizationStyles.css'; 
+import '../styles/OrganizationStyles.css';
 
 const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
     const [isRejecting, setIsRejecting] = useState(false);
@@ -21,9 +21,9 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
             const response = await fetch(`http://localhost:5000/api/admin/organization/${org._id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    status, 
-                    rejectionReason: status === 'rejected' ? rejectionReason : null 
+                body: JSON.stringify({
+                    status,
+                    rejectionReason: status === 'rejected' ? rejectionReason : null
                 })
             });
 
@@ -31,11 +31,12 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
 
             if (response.ok) {
                 // Update the parent state so the table reflects the change
-                onUpdateStatus(org._id, status);
-                
+                const reasonToPass = status === 'rejected' ? rejectionReason : "";
+                onUpdateStatus(org._id, status,reasonToPass);
+
                 // Optional: If you want to keep the modal open to see the change, comment out onClose()
                 // For now, we close it to return to the dashboard
-                onClose(); 
+                onClose();
             } else {
                 alert(data.message || "Action failed");
             }
@@ -58,7 +59,7 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
     return (
         <div className="details-overlay" onClick={onClose}>
             <div className="details-modal" onClick={(e) => e.stopPropagation()}>
-                
+
                 {/* Header */}
                 <header className="details-header">
                     <div className="header-left">
@@ -76,7 +77,7 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
 
                 {/* Content */}
                 <div className="details-content">
-                    
+
                     {/* --- DYNAMIC STATUS BANNER --- */}
                     {org.verification_status === 'rejected' && (
                         <div className="status-banner rejected-banner">
@@ -114,7 +115,7 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                                 <span className="info-value">{org.organizationName}</span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label"><Hash size={12}/> Registration No.</span>
+                                <span className="info-label"><Hash size={12} /> Registration No.</span>
                                 <span className="info-value">{org.registrationNumber || "N/A"}</span>
                             </div>
                             <div className="info-item">
@@ -124,7 +125,7 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                                 </span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label"><Calendar size={12}/> Applied On</span>
+                                <span className="info-label"><Calendar size={12} /> Applied On</span>
                                 <span className="info-value">{formatDate(org.createdAt)}</span>
                             </div>
                             <div className="info-item full-width">
@@ -141,15 +142,15 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                         <div className="section-title">Contact & Location</div>
                         <div className="info-grid">
                             <div className="info-item">
-                                <span className="info-label"><Mail size={12}/> Official Email</span>
+                                <span className="info-label"><Mail size={12} /> Official Email</span>
                                 <span className="info-value">{org.officialEmail}</span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label"><Phone size={12}/> Phone</span>
+                                <span className="info-label"><Phone size={12} /> Phone</span>
                                 <span className="info-value">{org.officialPhone}</span>
                             </div>
                             <div className="info-item full-width">
-                                <span className="info-label"><MapPin size={12}/> Address</span>
+                                <span className="info-label"><MapPin size={12} /> Address</span>
                                 <span className="info-value">{org.organizationAddress}</span>
                             </div>
                         </div>
@@ -160,11 +161,11 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                         <div className="section-title">Verification Documents</div>
                         <div className="info-item full-width">
                             <span className="info-label">Submitted Document</span>
-                            <div style={{marginTop: '8px'}}>
-                                <a 
-                                    href={org.verificationDocument} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
+                            <div style={{ marginTop: '8px' }}>
+                                <a
+                                    href={org.verificationDocument}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="doc-link-btn"
                                 >
                                     <FileText size={18} /> View Verification Document <ExternalLink size={14} />
@@ -176,13 +177,13 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                     {/* ACTION AREA: Rejection Input (Only visible when clicking Reject) */}
                     {isRejecting && (
                         <div className="rejection-area">
-                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', color: '#b91c1c', fontWeight: '600'}}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#b91c1c', fontWeight: '600' }}>
                                 <AlertTriangle size={18} /> Rejection Reason
                             </div>
-                            <p style={{fontSize: '0.85rem', color: '#7f1d1d', margin: '5px 0'}}>
+                            <p style={{ fontSize: '0.85rem', color: '#7f1d1d', margin: '5px 0' }}>
                                 Please specify why this organization is being rejected. This will be emailed to them.
                             </p>
-                            <textarea 
+                            <textarea
                                 className="rejection-input"
                                 placeholder="e.g., The registration document provided is blurry or does not match the organization name..."
                                 value={rejectionReason}
@@ -202,9 +203,9 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                                     <button className="btn-action btn-secondary" onClick={() => setIsRejecting(true)}>
                                         <XCircle size={18} /> Reject
                                     </button>
-                                    <button 
-                                        className="btn-action btn-approve" 
-                                        onClick={() => handleAction('approved')} 
+                                    <button
+                                        className="btn-action btn-approve"
+                                        onClick={() => handleAction('approved')}
                                         disabled={loading}
                                     >
                                         {loading ? 'Verifying...' : <><CheckCircle size={18} /> Verify Organization</>}
@@ -215,8 +216,8 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
                                     <button className="btn-action btn-secondary" onClick={() => setIsRejecting(false)}>
                                         Cancel
                                     </button>
-                                    <button 
-                                        className="btn-action btn-confirm-reject" 
+                                    <button
+                                        className="btn-action btn-confirm-reject"
                                         onClick={() => handleAction('rejected')}
                                         disabled={loading}
                                     >

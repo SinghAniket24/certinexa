@@ -33,39 +33,60 @@ const AdminDashboard = () => {
     };
 
     // 2. HELPER: PURE LOCAL STATE UPDATE 
-    // This updates the UI without calling the API (Used by Modal)
+    // ✅ FIXED LOGIC HERE
     const updateLocalState = (id, newStatus, rejectionReason = null) => {
         setOrganizations(prevOrgs => 
             prevOrgs.map(org => {
                 if (org._id === id) {
+                    
+                    // Logic: Calculate the new rejection reason
+                    let updatedReason = org.rejection_reason; // Default to existing
+
+                    if (newStatus !== 'rejected') {
+                        // If Approving or Pending, ALWAYS clear the reason
+                        updatedReason = ""; 
+                    } else if (rejectionReason !== null) {
+                        // If Rejecting AND a new reason is provided, use it
+                        updatedReason = rejectionReason; 
+                    }
+
                     return { 
                         ...org, 
                         verification_status: newStatus,
-                        // Update reason if provided, otherwise keep existing
-                        rejection_reason: rejectionReason || org.rejection_reason 
+                        rejection_reason: updatedReason
                     };
                 }
                 return org;
             })
         );
 
-        // Also update the selectedOrg if it is currently open, 
-        // so the banner updates instantly if we don't close the modal
+        // Also update the selectedOrg if it is currently open
         if (selectedOrg && selectedOrg._id === id) {
-            setSelectedOrg(prev => ({
-                ...prev, 
-                verification_status: newStatus,
-                rejection_reason: rejectionReason || prev.rejection_reason
-            }));
+            setSelectedOrg(prev => {
+                // Same logic for selectedOrg
+                let updatedReason = prev.rejection_reason;
+                if (newStatus !== 'rejected') {
+                    updatedReason = "";
+                } else if (rejectionReason !== null) {
+                    updatedReason = rejectionReason;
+                }
+
+                return {
+                    ...prev, 
+                    verification_status: newStatus,
+                    rejection_reason: updatedReason
+                };
+            });
         }
     };
 
     // 3. HANDLE TABLE BUTTON CLICKS (Approve/Reject from Table)
-    // This performs the API call because the Table Buttons don't have their own logic
     const handleStatusChange = async (id, newStatus) => {
         // Optimistic UI Update
         const previousOrgs = [...organizations];
-        updateLocalState(id, newStatus);
+        
+        // Note: Table buttons don't provide a reason, so we pass null
+        updateLocalState(id, newStatus, null); 
 
         try {
             const response = await fetch(`http://localhost:5000/api/admin/organization/${id}/status`, {
@@ -87,13 +108,9 @@ const AdminDashboard = () => {
 
     // 4. FILTER LOGIC
     const filteredOrgs = organizations.filter(org => {
-        // Match status (using verification_status)
         const matchesStatus = filterStatus === 'all' || org.verification_status === filterStatus;
-        
-        // Match search (using organizationName & registrationNumber)
         const nameMatch = org.organizationName?.toLowerCase().includes(searchQuery.toLowerCase());
         const regMatch = org.registrationNumber?.toLowerCase().includes(searchQuery.toLowerCase());
-        
         return matchesStatus && (nameMatch || regMatch);
     });
 
@@ -113,7 +130,6 @@ const AdminDashboard = () => {
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
             <main className="main-content">
-                {/* Header */}
                 <header className="dashboard-header">
                     <div className="header-title">
                         <h1>Organization Verification</h1>
@@ -132,7 +148,6 @@ const AdminDashboard = () => {
                     </div>
                 </header>
 
-                {/* Stats Cards */}
                 <div className="stats-grid">
                     <div className="stat-card pending">
                         <div className="stat-label">Pending Requests</div>
@@ -148,9 +163,7 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Table Container */}
                 <div className="table-container">
-                    {/* Tabs */}
                     <div className="tabs-header">
                         <Filter size={18} style={{ color: '#94a3b8' }} />
                         {['all', 'pending', 'approved', 'rejected'].map((tab) => (
@@ -164,7 +177,6 @@ const AdminDashboard = () => {
                         ))}
                     </div>
 
-                    {/* Table Content */}
                     {loading ? (
                         <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>
                             Loading Organization Data...
@@ -258,7 +270,7 @@ const AdminDashboard = () => {
                 <OrganizationDetails 
                     org={selectedOrg} 
                     onClose={() => setSelectedOrg(null)} 
-                    onUpdateStatus={updateLocalState} // Pass the PURE updater, not the API one
+                    onUpdateStatus={updateLocalState} 
                 />
             )}
             
