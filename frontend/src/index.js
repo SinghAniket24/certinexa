@@ -1,4 +1,3 @@
-// index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -14,10 +13,7 @@ import VerifierPortal from './verification/verifier';
 import AdminDashboard from './admin/pages/AdminDashboard';
 import AdminLogin from './admin/pages/AdminLogin';
 import AdminSignup from './admin/pages/AdminSignup';
-
-// 👇 1. IMPORT YOUR NEW ADMIN COMPONENT
-// (Make sure this path matches where you saved the file. 
-// If it's in a folder named 'admin', use './admin/AdminAuth')
+import OrganizationDashboard from './organization/organization_dashboard'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -31,7 +27,7 @@ root.render(
         {/* Organization Auth */}
         <Route path="/organization/login" element={<Login />} />
         <Route path="/organization/register" element={<Register />} />
-
+        <Route path="organization/organization_dashboard" element={<OrganizationDashboard />} /> 
         {/* Recipient Auth */}
         <Route path="/recepient/login" element={<RecipientLogin />} />
         <Route path="/recepient/register" element={<RecipientRegister />} />
@@ -46,7 +42,6 @@ root.render(
         {/* Admin Dashboard */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
-
     </BrowserRouter>
   </React.StrictMode>
 );
