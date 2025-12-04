@@ -116,28 +116,42 @@ router.get('/organizations', async (req, res) => {
 // @desc    Update organization verification_status (Approve/Reject)
 router.put('/organization/:id/status', async (req, res) => {
   try {
-    // 1. Extract rejectionReason from body
-    const { status, rejectionReason } = req.body; 
     const orgId = req.params.id;
+    
+    // 1. Log the body to debug (Check your terminal when you click reject)
+    console.log("Incoming Status Update Body:", req.body);
+
+    // 2. Extract Data (Handle both snake_case and camelCase to be safe)
+    const { status } = req.body;
+    
+    // Check for 'rejectionReason' OR 'rejection_reason'
+    const reasonPayload = req.body.rejectionReason || req.body.rejection_reason || "";
 
     // Validate status
     if (!['pending', 'approved', 'rejected'].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    // 2. Prepare the update object
+    // 3. Prepare the update object
     const updateData = { verification_status: status };
     
-    // Only save the rejection reason if status is 'rejected'
     if (status === 'rejected') {
-        updateData.rejection_reason = rejectionReason;
+        // Ensure we actually have a reason
+        if (!reasonPayload) {
+             return res.status(400).json({ message: "Rejection reason is required when rejecting." });
+        }
+        updateData.rejection_reason = reasonPayload;
+    } else {
+        // CLEVER TRICK: If status is 'approved' or 'pending', CLEAR the rejection reason.
+        // This prevents old reasons from staying in the DB if you change your mind.
+        updateData.rejection_reason = "";
     }
 
-    // 3. Update in MongoDB
+    // 4. Update in MongoDB
     const updatedOrg = await Organization.findByIdAndUpdate(
       orgId,
       updateData,
-      { new: true }
+      { new: true } // Return the updated document
     );
 
     if (!updatedOrg) {
@@ -149,15 +163,11 @@ router.put('/organization/:id/status', async (req, res) => {
     // -----------------------
     if (status === "approved") {
       try {
-        // 1. Generate keys
         await generateOrgKeys(orgId);
-
-        // 2. Send Approval Email
         await sendStatusEmail(updatedOrg, 'verified'); 
-
       } catch (keyErr) {
         console.error("Key Generation/Email Error:", keyErr);
-        return res.status(500).json({ message: "Organization approved, but key generation failed." });
+        // Note: We don't return 500 here because the DB update was actually successful
       }
     }
 
@@ -166,8 +176,8 @@ router.put('/organization/:id/status', async (req, res) => {
     // -----------------------
     if (status === "rejected") {
        try {
-         // Send Rejection Email with reason
-         await sendStatusEmail(updatedOrg, 'rejected', rejectionReason);
+         // Pass the reasonPayload explicitly to the email function
+         await sendStatusEmail(updatedOrg, 'rejected', reasonPayload);
        } catch (emailErr) {
          console.error("Email Sending Error:", emailErr);
        }
@@ -183,5 +193,3 @@ router.put('/organization/:id/status', async (req, res) => {
     res.status(500).json({ message: "Error updating status" });
   }
 });
-
-module.exports = router;
