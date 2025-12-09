@@ -5,9 +5,9 @@ export default function IssueCertificate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({});
-  const token = localStorage.getItem("org_token"); // JWT
+  const token = localStorage.getItem("org_token"); // JWT Token
 
-  // Fetch templates from backend
+  // Fetch templates on load
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
@@ -26,8 +26,7 @@ export default function IssueCertificate() {
     };
 
     fetchTemplates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   const handleTemplateSelect = (templateId) => {
     const template = templates.find(t => t._id === templateId);
@@ -43,35 +42,46 @@ export default function IssueCertificate() {
   };
 
   const handleChange = (e, label) => {
-    setFormData({
-      ...formData,
-      [label]: e.target.value
-    });
+    setFormData({ ...formData, [label]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData["Email"]) {
+    const primaryEmail = formData["Email"];
+    if (!primaryEmail) {
       alert("Email is required!");
       return;
     }
 
-    const newCert = {
-      id: Date.now(),
-      templateName: selectedTemplate.templateName,
-      fields: formData,
-      issuedAt: new Date().toISOString()
-    };
+    try {
+      const response = await fetch("http://localhost:5000/certificate/issue", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          templateName: selectedTemplate.templateName,
+          email: primaryEmail,
+          fields: formData,
+        }),
+      });
 
-    const existing = JSON.parse(localStorage.getItem("issued_certificates") || "[]");
-    existing.push(newCert);
-    localStorage.setItem("issued_certificates", JSON.stringify(existing));
+      const result = await response.json();
 
-    alert("Certificate issued and saved locally!");
-
-    setSelectedTemplate(null);
-    setFormData({});
+      if (response.ok) {
+        console.log("Response from backend:", result);
+        alert("Certificate issued successfully!");
+        setSelectedTemplate(null);
+        setFormData({});
+      } else {
+        alert(result.message || "Error issuing certificate");
+      }
+    } catch (error) {
+      console.error("Error issuing certificate:", error);
+      alert("Something went wrong!");
+    }
   };
 
   return (
@@ -88,7 +98,9 @@ export default function IssueCertificate() {
               <select onChange={(e) => handleTemplateSelect(e.target.value)} defaultValue="">
                 <option value="" disabled>-- Choose Template --</option>
                 {templates.map(t => (
-                  <option key={t._id} value={t._id}>{t.templateName}</option>
+                  <option key={t._id} value={t._id}>
+                    {t.templateName}
+                  </option>
                 ))}
               </select>
             </div>
@@ -106,7 +118,9 @@ export default function IssueCertificate() {
                   />
                 </div>
               ))}
-              <button type="submit" className="ic-btn-submit">Issue Certificate</button>
+              <button type="submit" className="ic-btn-submit">
+                Issue Certificate
+              </button>
             </form>
           )}
         </div>

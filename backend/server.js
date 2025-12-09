@@ -43,6 +43,10 @@ app.use('/api/admin', adminRoutes);
 // Use Template Routes
 app.use("/api/template", templateRoutes);
 
+//certificate routes
+const certificateRoutes = require("./routes/certificate");
+app.use("/certificate", certificateRoutes);
+
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });

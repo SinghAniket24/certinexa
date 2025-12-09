@@ -5,15 +5,20 @@ const jwt = require("jsonwebtoken");
 
 // Middleware to verify JWT
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1]; // Bearer token
-  if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+  const authHeader = req.headers["authorization"];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, "SECRET_KEY"); // replace with process.env.JWT_SECRET
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.organizationId = decoded.id;
     next();
   } catch (err) {
-    return res.status(400).json({ message: "Invalid token." });
+    console.error("JWT verify error:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
@@ -22,7 +27,7 @@ router.post("/create", verifyToken, async (req, res) => {
   try {
     const { templateName, fields } = req.body;
 
-    if (!templateName || !fields || !Array.isArray(fields) || fields.length === 0) {
+    if (!templateName || !Array.isArray(fields) || fields.length === 0) {
       return res.status(400).json({ message: "Template name and fields are required." });
     }
 

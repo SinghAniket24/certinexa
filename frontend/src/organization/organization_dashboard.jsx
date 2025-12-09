@@ -81,10 +81,18 @@ const Sidebar = ({ activePage, setActivePage }) => (
         Profile
       </button>
 
-      <button className="footer-item logout">
-        <LogOut size={18} />
-        Logout
-      </button>
+<button 
+  className="footer-item logout"
+  onClick={() => {
+    localStorage.removeItem("org_token");
+    localStorage.removeItem("org_details");
+    window.location.href = "/"; // redirect to home
+  }}
+>
+  <LogOut size={18} />
+  Logout
+</button>
+
     </div>
   </div>
 );
