@@ -5,7 +5,10 @@ const crypto = require("crypto");
 
 const Organization = require("../models/organization/organization");
 const OrgKey = require("../digitalSignature/keyModel");
-const Certificate = require("../models/certificate/certificate"); // Model import
+const Certificate = require("../models/certificate/certificate");
+
+// 📧 Mailer import (ADDED)
+const { sendCertificateMail } = require("../utils/mailer");
 
 // Blockchain Helper
 const { storeCertificateOnChain } = require("../config/blockchain");
@@ -70,7 +73,9 @@ router.post("/issue", authOrg, async (req, res) => {
     const { templateName, email, fields } = req.body;
 
     if (!templateName || !email || !fields) {
-      return res.status(400).json({ message: "templateName, email and fields are required" });
+      return res.status(400).json({
+        message: "templateName, email and fields are required",
+      });
     }
 
     const org = await Organization.findById(req.orgAuth.id);
@@ -89,15 +94,19 @@ router.post("/issue", authOrg, async (req, res) => {
       certificateId,
       orgId: org._id,
       orgName: org.organizationName,
-      certificateName: templateName, // ✔ mapped properly
-      recipientEmail: email, // ✔ using preferred naming
+      certificateName: templateName,
+      recipientEmail: email,
       fields,
       issuedAt,
     };
 
     const certificateJson = JSON.stringify(certificateData);
 
-    const hashBuffer = crypto.createHash("sha256").update(certificateJson).digest();
+    const hashBuffer = crypto
+      .createHash("sha256")
+      .update(certificateJson)
+      .digest();
+
     const hashHex = hashBuffer.toString("hex");
 
     const signatureBuffer = crypto.sign(null, hashBuffer, {
@@ -108,22 +117,12 @@ router.post("/issue", authOrg, async (req, res) => {
 
     const signatureBase64 = signatureBuffer.toString("base64");
 
-    // Debug Logs (Keep for demo)
-    console.log("======================================================");
-    console.log("📜 New Certificate Issued:");
-    console.log("➡ Certificate Data:", certificateData);
-    console.log("🔐 Hash:", hashHex);
-    console.log("✍️ Signature:", signatureBase64.substring(0, 60) + "...");
-    console.log("======================================================");
-
     // 🚀 Blockchain Storage
-    console.log("⛓️ Sending certificate to blockchain...");
     const txHash = await storeCertificateOnChain(
       certificateId,
       "0x" + hashHex,
       signatureBase64
     );
-    console.log("⛓️ Blockchain Tx Hash:", txHash);
 
     // 🛠 Save in MongoDB
     await Certificate.create({
@@ -135,6 +134,20 @@ router.post("/issue", authOrg, async (req, res) => {
 
     console.log("🗄️ Certificate saved in MongoDB!");
 
+    // 📧 SEND EMAIL TO RECIPIENT (ADDED)
+    try {
+      await sendCertificateMail({
+        to: email,
+        certificateId,
+        certificateName: templateName,
+        issuer: org.organizationName,
+        issuedAt,
+      });
+      console.log("📧 Certificate email sent to recipient");
+    } catch (mailErr) {
+      console.error("📧 Email sending failed:", mailErr.message);
+    }
+
     return res.status(200).json({
       message: "Certificate issued and stored successfully",
       certificate: certificateData,
@@ -144,13 +157,14 @@ router.post("/issue", authOrg, async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Error issuing certificate & storing:", err);
-    return res.status(500).json({ message: "Server error while issuing certificate" });
+    console.error("Error issuing certificate:", err);
+    return res.status(500).json({
+      message: "Server error while issuing certificate",
+    });
   }
 });
 
-
-// ---------- GET /certificate/list (Org-based fetch) ----------
+// ---------- GET /certificate/list ----------
 router.get("/list", authOrg, async (req, res) => {
   try {
     const certificates = await Certificate.find({ orgId: req.orgAuth.id })
@@ -162,7 +176,9 @@ router.get("/list", authOrg, async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching certificates:", err);
-    return res.status(500).json({ message: "Server error while fetching certificates" });
+    return res.status(500).json({
+      message: "Server error while fetching certificates",
+    });
   }
 });
 
