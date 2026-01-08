@@ -1,9 +1,10 @@
 // src/recipient/Auth/login.jsx
 import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 1. Import useNavigate
 import './login.css';
 
 const RecipientLogin = () => {
+  const navigate = useNavigate(); // 2. Initialize the hook
 
   const [formData, setFormData] = useState({
     email: '',
@@ -40,10 +41,12 @@ const RecipientLogin = () => {
       // Save token
       localStorage.setItem("recepientToken", data.token);
 
-      setMessage("Login successful!");
+      setMessage("Login successful! Redirecting...");
 
-      // No navigation added
-      // Just show success message
+      // 3. Navigate to Dashboard (1 second delay for UX)
+      setTimeout(() => {
+        navigate("/recepient/dashboard");
+      }, 1000);
 
     } catch (error) {
       console.error(error);

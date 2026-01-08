@@ -167,3 +167,29 @@ router.get("/list", authOrg, async (req, res) => {
 });
 
 module.exports = router;
+
+function authRecepient(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    
+    // Ensure you use the SECRET used during Recipient Login/Register
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+
+    req.recepientAuth = {
+      id: decoded.id, // or decoded._id depending on your login logic
+      email: decoded.email,
+    };
+
+    next();
+  } catch (err) {
+    console.error("Recipient Auth Error:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+}
+
+module.exports = authRecepient;

@@ -9,6 +9,9 @@ import Login from './organization/login';
 import Register from './organization/register';
 import RecipientLogin from './recepient/login';
 import RecipientRegister from './recepient/register';
+// 1. Import the Dashboard Component
+import RecipientDashboard from './recepient/RecipientDashboard'; 
+
 import VerifierPortal from './verification/verifier';
 import AdminDashboard from './admin/pages/AdminDashboard';
 import AdminLogin from './admin/pages/AdminLogin';
@@ -28,9 +31,13 @@ root.render(
         <Route path="/organization/login" element={<Login />} />
         <Route path="/organization/register" element={<Register />} />
         <Route path="organization/organization_dashboard" element={<OrganizationDashboard />} /> 
+        
         {/* Recipient Auth */}
         <Route path="/recepient/login" element={<RecipientLogin />} />
         <Route path="/recepient/register" element={<RecipientRegister />} />
+        
+        {/* 2. ADD THIS ROUTE HERE */}
+        <Route path="/recepient/dashboard" element={<RecipientDashboard />} />
 
         {/* Verifier */}
         <Route path="/verification/verifier" element={<VerifierPortal />} />

@@ -2,12 +2,19 @@ import React from "react";
 import { FaCertificate, FaUserGraduate, FaCheckCircle } from "react-icons/fa";
 import "./App.css";
 import { useNavigate, Routes, Route } from "react-router-dom";
+
+// --- Imports ---
 import Login from "./organization/login";
-import RecepientLogin from "./recepient/login";  // folder name is recepient
+import RecepientLogin from "./recepient/login";  
 import VerifierPortal from "./verification/verifier";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import OrganizationDashboard from "./organization/organization_dashboard";
+
+// --- FIX 1: Import the Dashboard correctly ---
+// Based on your screenshot, the file is RecipientDashboard.jsx inside the 'recepient' folder
+import RecipientDashboard from "./recepient/RecipientDashboard";
+import RecipientRegister from "./recepient/register";
 
 export default function App() {
 
@@ -18,7 +25,7 @@ export default function App() {
 
     if (role === "issuer") {
       navigate("/organization/login");
-    } else if (role === "recepient") { // match the spelling here
+    } else if (role === "recepient") { 
       navigate("/recepient/login");
     } else if (role === "verifier") {
       navigate("/verification/verifier");
@@ -28,9 +35,8 @@ export default function App() {
 
   return (
     <>
-      {/* ROUTES */}
       <Routes>
-        {/* Home Page */}
+        {/* Home Page (Your existing Landing Page) */}
         <Route
           path="/"
           element={
@@ -52,7 +58,7 @@ export default function App() {
                 </div>
 
                 <div
-                  className="role-card recepient"  // match the spelling here
+                  className="role-card recepient"
                   onClick={() => handleCardClick("recepient")}
                 >
                   <FaUserGraduate className="card-icon" />
@@ -75,13 +81,19 @@ export default function App() {
           }
         />
 
-        {/* LOGIN PAGE ROUTE */}
+        {/* --- EXISTING ROUTES --- */}
         <Route path="/organization/login" element={<Login />} />
         <Route path="/recepient/login" element={<RecepientLogin />} />
         <Route path="/verification/verifier" element={<VerifierPortal />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard"element={<AdminDashboard />}/>
+        <Route path="/admin/dashboard" element={<AdminDashboard />}/>
         <Route path="/organization_dashboard" element={<OrganizationDashboard />} />
+        <Route path="/recepient/register" element={<RecipientRegister />} />
+        
+        {/* --- FIX 2: Added the Missing Dashboard Route --- */}
+        {/* This matches the URL you redirect to in login.jsx */}
+        <Route path="/recepient/dashboard" element={<RecipientDashboard />} />
+
       </Routes>
     </>
   );
