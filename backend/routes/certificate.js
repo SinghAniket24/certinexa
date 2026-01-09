@@ -5,7 +5,10 @@ const crypto = require("crypto");
 
 const Organization = require("../models/organization/organization");
 const OrgKey = require("../digitalSignature/keyModel");
-const Certificate = require("../models/certificate/certificate"); // Model import
+const Certificate = require("../models/certificate/certificate");
+
+// 📧 Mailer import (From Branch 2)
+const { sendCertificateMail } = require("../utils/mailer");
 
 // Blockchain Helper
 const { storeCertificateOnChain } = require("../config/blockchain");
@@ -89,8 +92,8 @@ router.post("/issue", authOrg, async (req, res) => {
       certificateId,
       orgId: org._id,
       orgName: org.organizationName,
-      certificateName: templateName, // ✔ mapped properly
-      recipientEmail: email, // ✔ using preferred naming
+      certificateName: templateName,
+      recipientEmail: email,
       fields,
       issuedAt,
     };
@@ -108,7 +111,7 @@ router.post("/issue", authOrg, async (req, res) => {
 
     const signatureBase64 = signatureBuffer.toString("base64");
 
-    // Debug Logs (Keep for demo)
+    // Debug Logs (From Branch 1 - kept for visibility)
     console.log("======================================================");
     console.log("📜 New Certificate Issued:");
     console.log("➡ Certificate Data:", certificateData);
@@ -134,6 +137,20 @@ router.post("/issue", authOrg, async (req, res) => {
     });
 
     console.log("🗄️ Certificate saved in MongoDB!");
+
+    // 📧 SEND EMAIL TO RECIPIENT 
+    try {
+      await sendCertificateMail({
+        to: email,
+        certificateId,
+        certificateName: templateName,
+        issuer: org.organizationName,
+        issuedAt,
+      });
+      console.log("📧 Certificate email sent to recipient");
+    } catch (mailErr) {
+      console.error("📧 Email sending failed:", mailErr.message);
+    }
 
     return res.status(200).json({
       message: "Certificate issued and stored successfully",
@@ -167,29 +184,3 @@ router.get("/list", authOrg, async (req, res) => {
 });
 
 module.exports = router;
-
-function authRecepient(req, res, next) {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "No token provided" });
-    }
-
-    const token = authHeader.split(" ")[1];
-    
-    // Ensure you use the SECRET used during Recipient Login/Register
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-
-    req.recepientAuth = {
-      id: decoded.id, // or decoded._id depending on your login logic
-      email: decoded.email,
-    };
-
-    next();
-  } catch (err) {
-    console.error("Recipient Auth Error:", err.message);
-    return res.status(401).json({ message: "Invalid or expired token" });
-  }
-}
-
-module.exports = authRecepient;
