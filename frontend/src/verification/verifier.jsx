@@ -1,5 +1,3 @@
-// VerifierPortal.jsx
-
 import React, { useState } from "react";
 import "./verifier.css";
 import { FaShieldAlt } from "react-icons/fa";
@@ -7,66 +5,84 @@ import { FaShieldAlt } from "react-icons/fa";
 const VerifierPortal = () => {
   const [link, setLink] = useState("");
   const [resultData, setResultData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const handleVerify = () => {
-    if (!link) {
-      setResultData({
+  const handleVerify = async () => {
+    setResultData(null);
+    setShowDetails(false);
+
+    if (!link.trim()) {
+      return setResultData({
         status: "alert",
-        message: "Please enter a certificate link or ID.",
+        message: "⚠ Please enter a certificate ID.",
       });
-      return;
     }
 
-    // Dummy verification logic
-    if (link.toLowerCase().includes("valid")) {
-      setResultData({
-        status: "valid",
-        message: "Certificate is Valid",
-        issuer: "CertiNexa Blockchain Authority",
-        holder: "John Doe",
-        issuedOn: "12 Oct 2025",
-        issuedby: "edtech",
-        certificateId: "CERTX-8492-VALID",
-        hash: "0x8df92a0b7c5abf92d1a8ce2390f19ab937bd1e92f91f0ad77ac5",
-      });
-    } else {
+    const certificateId = link.trim();
+    setLoading(true);
+
+    try {
+      const res = await fetch(`http://localhost:5000/verify/${certificateId}`);
+      const data = await res.json();
+
+      if (data.valid) {
+        setResultData({
+          status: "valid",
+          message: data.message,
+          certificateName: data.certificateName,
+          issuer: data.issuer,
+          recipientEmail: data.recipientEmail,
+          issuedOn: new Date(data.issuedOn).toLocaleString(),
+          certificateId: data.certificateId,
+          blockchainTxId: data.blockchainTxId,
+          hash: data.hash,
+          fields: data.fields || {},
+        });
+      } else {
+        setResultData({
+          status: "invalid",
+          message: data.message || "Certificate NOT VERIFIED ❌",
+          hash: data.hash || "N/A",
+        });
+      }
+
+    } catch (error) {
+      console.error("⚠ Verification Error:", error);
       setResultData({
         status: "invalid",
-        message: "Certificate is Invalid",
-        hash: "0x00000000000000000000000000000000000000000",
+        message: "Server Error! Try again 🔁",
       });
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="container">
       <div className="big-card">
 
-        {/* Icon */}
         <div className="icon-wrapper">
           <FaShieldAlt className="shield-icon" />
         </div>
 
         <h1 className="title">CertiNexa Verifier</h1>
-
         <p className="description">
-          Verify blockchain-secured digital certificates issued through CertiNexa. 
-          Enter a certificate link or ID below to check authenticity instantly.
+          Verify blockchain-secured certificates instantly.
         </p>
 
         <input
           type="text"
-          placeholder="Paste certificate link or ID "
+          placeholder="Example: XYZ-A1B2C3"
           value={link}
           onChange={(e) => setLink(e.target.value)}
           className="input"
         />
 
-        <button className="button" onClick={handleVerify}>
-          Verify Certificate
+        <button className="button" onClick={handleVerify} disabled={loading}>
+          {loading ? "Verifying..." : "Verify Certificate"}
         </button>
 
-        {/* RESULT */}
         {resultData && (
           <div
             className={`result-box ${
@@ -78,25 +94,60 @@ const VerifierPortal = () => {
             }`}
           >
             <div className="status-icon">
-              {resultData.status === "valid" ? "✅" : "❌"}
+              {resultData.status === "valid"
+                ? ""
+                : resultData.status === "invalid"
+                ? "🔴"
+                : "⚠️"}
             </div>
 
             <div className="status-text">{resultData.message}</div>
 
-            {/* Valid Details */}
+            {/* VALID CERTIFICATE — QUICK SUMMARY */}
             {resultData.status === "valid" && (
-              <div className="details-grid">
-                <div><strong>Issuer:</strong> {resultData.issuer}</div>
-                <div><strong>Holder:</strong> {resultData.holder}</div>
-                <div><strong>Issued On:</strong> {resultData.issuedOn}</div>
-                <div><strong>Certificate ID:</strong> {resultData.certificateId}</div>
-                <div className="hash">
-                  <strong>Hash:</strong> {resultData.hash}
+              <>
+                <div className="summary">
+                  ✔ Issued to: <strong>{resultData.recipientEmail}</strong>  
+                  <br />
+                  ✔ By: <strong>{resultData.issuer}</strong>
                 </div>
-              </div>
+
+                {/* Toggle Button */}
+                <button
+                  className="view-more-btn"
+                  onClick={() => setShowDetails(!showDetails)}
+                >
+                  {showDetails ? "Hide Full Details ▲" : "View Full Details ▼"}
+                </button>
+
+                {/* Full Details Panel */}
+                {showDetails && (
+                  <div className="details-grid fade-in">
+
+                    <div><strong>Certificate Name:</strong> {resultData.certificateName}</div>
+                    <div><strong>Recipient Email:</strong> {resultData.recipientEmail}</div>
+                    <div><strong>Issued On:</strong> {resultData.issuedOn}</div>
+
+                    <div><strong>Certificate ID:</strong> {resultData.certificateId}</div>
+                    <div><strong>Blockchain Tx:</strong> {resultData.blockchainTxId}</div>
+
+                    <div className="hash"><strong>Hash:</strong> {resultData.hash}</div>
+
+                    <div className="field-section">
+                      <strong>Certificate Fields:</strong>
+                      {Object.entries(resultData.fields).map(([key, value]) => (
+                        <div key={key}>
+                          <strong>{key}:</strong> {value}
+                        </div>
+                      ))}
+                    </div>
+
+                  </div>
+                )}
+              </>
             )}
 
-            {/* Invalid */}
+            {/* INVALID VIEW */}
             {resultData.status === "invalid" && (
               <div className="hash">
                 <strong>Hash:</strong> {resultData.hash}

@@ -3,52 +3,70 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 
-// 1. Load the ABI
+/* =========================
+   LOAD ABI
+========================= */
 const abiPath = path.join(__dirname, "../abis/CertificateRegistry.json");
 const contractJson = JSON.parse(fs.readFileSync(abiPath, "utf8"));
 const abi = contractJson.abi;
 
-// 2. Setup Provider and Wallet
+/* =========================
+   PROVIDER & WALLET
+========================= */
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-// 3. Create Contract Instance
-const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, abi, wallet);
+/* =========================
+   CONTRACT INSTANCE
+========================= */
+const contract = new ethers.Contract(
+  process.env.CONTRACT_ADDRESS,
+  abi,
+  wallet
+);
 
-// 4. Helper Function: Store Certificate
+/* =========================
+   STORE CERTIFICATE
+========================= */
 const storeCertificateOnChain = async (certId, hash, signature) => {
-    try {
-        console.log(`🔗 Blockchain: Storing certificate ${certId}...`);
-        
-        // Send transaction
-        const tx = await contract.storeCertificate(certId, hash, signature);
-        console.log(`⏳ Transaction sent: ${tx.hash}`);
-        
-        // Wait for it to be mined
-        await tx.wait();
-        console.log(`✅ Transaction confirmed on block.`);
-        
-        return tx.hash;
-    } catch (error) {
-        console.error("❌ Blockchain Error:", error.message);
-        throw new Error("Blockchain storage failed: " + error.message);
-    }
+  try {
+    console.log(`Blockchain: Storing certificate ${certId}`);
+
+    const tx = await contract.storeCertificate(certId, hash, signature);
+    await tx.wait();
+
+    return tx.hash;
+  } catch (error) {
+    console.error("Blockchain storage error:", error.message);
+    throw new Error("Blockchain storage failed");
+  }
 };
 
-// 5. Helper Function: Verify Certificate
+/* =========================
+   VERIFY CERTIFICATE
+========================= */
 const verifyCertificateOnChain = async (certId) => {
-    try {
-        const result = await contract.getCertificate(certId);
-        // Result is an array: [hash, signature, timestamp]
-        return {
-            hash: result[0],
-            signature: result[1],
-            timestamp: result[2].toString() // Convert BigInt to string
-        };
-    } catch (error) {
-        console.error("❌ Blockchain Verification Error:", error.message);
-        return null; // Certificate not found
+  try {
+    const result = await contract.getCertificate(certId);
+
+    // If contract returns empty hash, certificate does not exist
+    if (!result || result[0] === ethers.ZeroHash) {
+      return { exists: false };
     }
+
+    return {
+      exists: true,
+      hash: result[0],
+      signature: result[1],
+      timestamp: result[2].toString(),
+    };
+  } catch (error) {
+    console.error("Blockchain verification error:", error.message);
+    return { exists: false };
+  }
 };
 
-module.exports = { storeCertificateOnChain, verifyCertificateOnChain };
+module.exports = {
+  storeCertificateOnChain,
+  verifyCertificateOnChain,
+};
