@@ -1,0 +1,211 @@
+:root {
+  --void-navy: #0F172A;
+  --nexa-blue: #3B82F6;
+  --chain-teal: #06B6D4;
+  --seal-gold: #F59E0B;
+  --success-green: #10B981;
+  --text-white: #FFFFFF;
+  --input-bg: rgba(12,18,30,0.95); /* dark input background */
+  --border-glass: rgba(255,255,255,0.1);
+}
+
+/* Full page */
+.reg-main {
+  height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 40%, #0EA5E9 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Logo top-left */
+.brand-logo {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-white);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Form Container */
+.reg-container {
+  width: 100%;
+  max-width: 500px; /* limits form width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent; /* no white card */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Glass Card for form with animation */
+.reg-card {
+  width: 100%;
+  padding: 50px 40px; /* taller padding for more height */
+  border-radius: 20px;
+  background: rgba(44, 61, 100, 0.18); /* glass effect */
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  /* Animation */
+  animation: slideDown 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(-50px);
+}
+
+/* Animation Keyframes */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Titles */
+.reg-title { 
+  color: var(--text-white); 
+  font-size: 28px; 
+  font-weight: 700; 
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.reg-subtitle { 
+  color: #E2E8F0; 
+  margin-bottom: 30px; 
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Inputs */
+.form-group { 
+  width: 100%;
+  text-align: left; 
+  margin-top: 15px; 
+}
+
+.form-label { 
+  color: var(--text-white); 
+  font-weight: 600; 
+}
+
+.input-wrapper { 
+  position: relative; 
+}
+
+.input-icon { 
+  position: absolute; 
+  top: 50%; 
+  left: 12px; 
+  transform: translateY(-50%); 
+  color: #CBD5E1; 
+  font-size: 18px; 
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 12px 14px 38px; /* slightly taller input */
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+  background: var(--input-bg); /* dark input */
+  color: var(--text-white);
+  outline: none;
+  transition: 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.form-input::placeholder { color: #7F9CA7; }
+
+.form-input:focus { 
+  border-color: var(--chain-teal); 
+  box-shadow: 0 0 6px rgba(6,182,212,0.5); 
+}
+
+/* Wallet input left border */
+.input-wallet { 
+  border-left: 4px solid var(--chain-teal); 
+}
+
+/* Button */
+.submit-btn {
+  width: 100%; 
+  padding: 16px; /* taller button */
+  margin-top: 25px; 
+  border-radius: 12px;
+  border: none; 
+  background: linear-gradient(135deg, #2563EB, var(--nexa-blue));
+  color: var(--text-white); 
+  font-size: 17px; 
+  font-weight: 600; 
+  cursor: pointer;
+  transition: 0.25s ease-in-out;
+}
+
+.submit-btn:hover { 
+  transform: translateY(-2px); 
+  background: linear-gradient(135deg, #1D4ED8, #2563EB); 
+}
+
+/* Toggle text */
+.toggle-text { margin-top: 18px; color: #E2E8F0; font-size: 14px; }
+.toggle-link { margin-left: 6px; color: #38BDF8; font-weight: 600; text-decoration: none; }
+.toggle-link:hover { text-decoration: underline; }
+
+.toggle-text { 
+  margin-top: 18px; 
+  color: #E2E8F0; 
+  font-size: 14px; 
+  text-align: center;
+}
+
+.toggle-link { 
+  margin-left: 6px; 
+  color: var(--nexa-blue); 
+  font-weight: 600; 
+  text-decoration: none; 
+}
+
+.toggle-link:hover { 
+  text-decoration: underline; 
+}
+
+/* Success message */
+.success-text {
+  color: var(--success-green);
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* Certificate badge / optional Seal Gold */
+.badge-gold {
+  color: var(--seal-gold);
+  font-weight: 700;
+}
+
+/* Form itself */
+.reg-form {
+  width: 100%;
+  background: transparent; /* no white card */
+  padding: 0;
+  margin: 0;
+}
+

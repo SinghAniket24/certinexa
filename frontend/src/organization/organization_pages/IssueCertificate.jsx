@@ -86,7 +86,7 @@ export default function IssueCertificate() {
 
   return (
     <div className="ic-wrap">
-      <h2 className="ic-title">Issue Certificate</h2>
+      <h2 className="mt-title">Issue Certificate</h2>
 
       {templates.length === 0 ? (
         <div className="ic-empty">No templates available. Create one first.</div>

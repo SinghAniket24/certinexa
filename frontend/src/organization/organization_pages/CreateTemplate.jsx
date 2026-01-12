@@ -92,7 +92,8 @@ export default function CreateTemplate({ onSaved }) {
 
   return (
     <div className="create-template-wrap">
-      <h2 className="ct-title">Create Template</h2>
+      {/* Gradient Title like VC */}
+      <h2 className="mt-title">Create Template</h2>
 
       <div className="ct-card">
         <label className="ct-label">Template Name</label>

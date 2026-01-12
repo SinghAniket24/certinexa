@@ -5,8 +5,8 @@ import "./managetemplate.css";
 export default function ManageTemplates() {
   const [templates, setTemplates] = useState([]);
   const [viewingTemplate, setViewingTemplate] = useState(null);
-  const [message, setMessage] = useState(""); // For success/error messages
-  const token = localStorage.getItem("org_token"); // JWT
+  const [message, setMessage] = useState("");
+  const token = localStorage.getItem("org_token");
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -16,26 +16,25 @@ export default function ManageTemplates() {
             Authorization: `Bearer ${token}`,
           },
         });
+
         const data = await response.json();
+
         if (response.ok) {
           setTemplates(data.templates || []);
         } else {
-          console.error(data.message || "Failed to fetch templates");
           setMessage(data.message || "Failed to fetch templates");
         }
       } catch (err) {
-        console.error("Error fetching templates:", err);
         setMessage("Error fetching templates");
+        console.error(err);
       }
     };
 
     fetchTemplates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // keep empty array since token won't change
+  }, []);
 
   const deleteTemplate = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this template?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this template?")) return;
 
     try {
       const response = await fetch(`http://localhost:5000/api/template/delete/${id}`, {
@@ -44,29 +43,30 @@ export default function ManageTemplates() {
           Authorization: `Bearer ${token}`,
         },
       });
+
       const data = await response.json();
+
       if (response.ok) {
-        setTemplates(prev => prev.filter(t => t._id !== id));
+        setTemplates((prev) => prev.filter((t) => t._id !== id));
         setMessage("Template deleted successfully!");
       } else {
-        console.error(data.message || "Failed to delete template");
         setMessage(data.message || "Failed to delete template");
       }
     } catch (err) {
-      console.error("Error deleting template:", err);
       setMessage("Error deleting template");
+      console.error(err);
     }
   };
 
-  const viewTemplate = (template) => setViewingTemplate(template);
-  const closeView = () => setViewingTemplate(null);
-
   return (
     <div className="mt-wrap">
+      {/* Title */}
       <h2 className="mt-title">Manage Templates</h2>
 
+      {/* Notification */}
       {message && <div className="mt-message">{message}</div>}
 
+      {/* No Data */}
       {templates.length === 0 ? (
         <div className="mt-empty">
           No templates found.
@@ -76,28 +76,35 @@ export default function ManageTemplates() {
         <div className="mt-grid">
           {templates.map((t) => (
             <div key={t._id} className="mt-card">
+              {/* Card header */}
               <div className="mt-card-header">
-                <div className="mt-card-actions">
-                  <FaTrash
-                    className="mt-card-icon delete-icon"
-                    title="Delete Template"
-                    onClick={() => deleteTemplate(t._id)}
-                  />
-                </div>
+                <FaTrash
+                  className="mt-card-icon delete-icon"
+                  title="Delete Template"
+                  onClick={() => deleteTemplate(t._id)}
+                />
               </div>
 
+              {/* Title */}
               <h3 className="mt-card-title">{t.templateName}</h3>
 
+              {/* Field chips */}
               <div className="mt-field-chips">
                 {t.fields.slice(0, 2).map((f, i) => (
-                  <span key={i} className="mt-chip">{f.label}</span>
+                  <span key={i} className="mt-chip">
+                    {f.label}
+                  </span>
                 ))}
                 {t.fields.length > 2 && (
                   <span className="mt-chip">+{t.fields.length - 2} more</span>
                 )}
               </div>
 
-              <button className="mt-btn-view" onClick={() => viewTemplate(t)}>
+              {/* View button */}
+              <button
+                className="mt-btn-view"
+                onClick={() => setViewingTemplate(t)}
+              >
                 View Details
               </button>
             </div>
@@ -105,10 +112,12 @@ export default function ManageTemplates() {
         </div>
       )}
 
+      {/* Modal */}
       {viewingTemplate && (
         <div className="mt-modal">
-          <div className="mt-modal-content">
-            <h3>{viewingTemplate.templateName}</h3>
+          <div className="mt-modal-content mt-animate">
+            <h3 className="mt-modal-title">{viewingTemplate.templateName}</h3>
+
             <div className="mt-fields-list">
               {viewingTemplate.fields.map((f, i) => (
                 <div key={i} className="mt-field-row">
@@ -118,7 +127,10 @@ export default function ManageTemplates() {
                 </div>
               ))}
             </div>
-            <button className="mt-btn-close" onClick={closeView}>Close</button>
+
+            <button className="mt-btn-close" onClick={() => setViewingTemplate(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}

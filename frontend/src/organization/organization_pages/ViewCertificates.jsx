@@ -46,7 +46,7 @@ export default function ViewCertificates() {
 
   return (
     <div className="vc-wrap">
-      <h2 className="vc-title">Issued Certificates</h2>
+      <h2 className="mt-title">Issued Certificates</h2>
 
       {loading ? (
         <div className="vc-loading">Loading...</div>
