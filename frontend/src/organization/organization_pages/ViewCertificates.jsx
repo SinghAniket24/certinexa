@@ -42,7 +42,45 @@ export default function ViewCertificates() {
     alert("Copied!");
   };
 
-  /* ================= 🔍 SEARCH (FIXED) ================= */
+  // ================= DELETE CERTIFICATE =================
+  const handleDelete = async (certId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this certificate?\nThis action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/certificate/${certId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        setCertificates((prev) =>
+          prev.filter((c) => c._id !== certId)
+        );
+
+        if (viewingCert && viewingCert._id === certId) {
+          closeView();
+        }
+
+        alert("Certificate deleted successfully");
+      } else {
+        alert("Failed to delete certificate");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Server error while deleting certificate");
+    }
+  };
+
+  /* ================= 🔍 SEARCH ================= */
   const normalizedSearch = searchTerm.trim().toLowerCase();
 
   const filteredCertificates = certificates.filter((cert) => {
@@ -108,6 +146,13 @@ export default function ViewCertificates() {
                     >
                       <FaEye /> View
                     </button>
+
+                    <button
+                      className="vc-btn-delete"
+                      onClick={() => handleDelete(cert._id)}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))}
@@ -165,10 +210,7 @@ export default function ViewCertificates() {
                   <tr>
                     <th>Transaction ID</th>
                     <td className="vc-copy-link-row">
-                      {viewingCert.blockchainTxId?.substring(
-                        0,
-                        15
-                      )}
+                      {viewingCert.blockchainTxId?.substring(0, 15)}
                       ...
                       <FaCopy
                         className="vc-copy-icon"

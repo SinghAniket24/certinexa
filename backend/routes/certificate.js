@@ -170,4 +170,34 @@ router.get("/list", authOrg, async (req, res) => {
   }
 });
 
+// ---------- DELETE /certificate/:id ----------
+router.delete("/:id", authOrg, async (req, res) => {
+  try {
+    const certId = req.params.id;
+
+    const certificate = await Certificate.findById(certId);
+
+    if (!certificate) {
+      return res.status(404).json({ message: "Certificate not found" });
+    }
+
+    // Safety: only issuing organization can delete
+    if (certificate.orgId.toString() !== req.orgAuth.id) {
+      return res.status(403).json({ message: "Unauthorized action" });
+    }
+
+    await certificate.deleteOne();
+
+    return res.status(200).json({
+      message: "Certificate deleted successfully",
+    });
+  } catch (err) {
+    console.error("Error deleting certificate:", err);
+    return res.status(500).json({
+      message: "Server error while deleting certificate",
+    });
+  }
+});
+
+
 module.exports = router;

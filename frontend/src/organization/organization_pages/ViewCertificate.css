@@ -327,3 +327,29 @@
     padding: 12px;
   }
 }
+
+
+/* =========================================
+   DELETE BUTTON (RED DEFAULT)
+=========================================*/
+.vc-btn-delete {
+  background: var(--danger); /* red initial */
+  color: #ffffff;
+  border: 1px solid var(--danger);
+  padding: 9px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+}
+
+.vc-btn-delete:hover {
+  background: #dc2626; /* darker red */
+  border-color: #dc2626;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45);
+  transform: translateY(-2px);
+}
