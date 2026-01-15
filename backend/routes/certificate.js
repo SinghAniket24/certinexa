@@ -7,13 +7,13 @@ const Organization = require("../models/organization/organization");
 const OrgKey = require("../digitalSignature/keyModel");
 const Certificate = require("../models/certificate/certificate");
 
-// 📧 Mailer import (ADDED)
+// Mailer
 const { sendCertificateMail } = require("../utils/mailer");
 
 // Blockchain Helper
 const { storeCertificateOnChain } = require("../config/blockchain");
 
-// ---------- Simple Org Auth Middleware ----------
+
 function authOrg(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
@@ -124,7 +124,7 @@ router.post("/issue", authOrg, async (req, res) => {
       signatureBase64
     );
 
-    // 🛠 Save in MongoDB
+    // Save in MongoDB
     await Certificate.create({
       ...certificateData,
       hash: hashHex,

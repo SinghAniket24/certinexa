@@ -10,6 +10,7 @@ import VerifierPortal from "./verification/verifier";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminDashboard from "./admin/pages/AdminDashboard";
 import OrganizationDashboard from "./organization/organization_dashboard";
+import Chatbot from "./chatbot/Chatbot";
 
 // --- FIX 1: Import the Dashboard correctly ---
 // Based on your screenshot, the file is RecipientDashboard.jsx inside the 'recepient' folder
@@ -81,7 +82,7 @@ export default function App() {
           }
         />
 
-        {/* --- EXISTING ROUTES --- */}
+       
         <Route path="/organization/login" element={<Login />} />
         <Route path="/recepient/login" element={<RecepientLogin />} />
         <Route path="/verification/verifier" element={<VerifierPortal />} />
@@ -90,11 +91,12 @@ export default function App() {
         <Route path="/organization_dashboard" element={<OrganizationDashboard />} />
         <Route path="/recepient/register" element={<RecipientRegister />} />
         
-        {/* --- FIX 2: Added the Missing Dashboard Route --- */}
-        {/* This matches the URL you redirect to in login.jsx */}
+        
         <Route path="/recepient/dashboard" element={<RecipientDashboard />} />
 
       </Routes>
+
+       <Chatbot />
     </>
   );
 }

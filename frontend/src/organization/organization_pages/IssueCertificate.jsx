@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./IssueCertificate.css";
+import BulkIssueCertificate from "./BulkIssueCertificate"; 
 
 export default function IssueCertificate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({});
-  const token = localStorage.getItem("org_token"); // JWT Token
+  const [mode, setMode] = useState("single"); // single | bulk
+
+  const token = localStorage.getItem("org_token");
 
   // Fetch templates on load
   useEffect(() => {
@@ -29,12 +32,12 @@ export default function IssueCertificate() {
   }, [token]);
 
   const handleTemplateSelect = (templateId) => {
-    const template = templates.find(t => t._id === templateId);
+    const template = templates.find((t) => t._id === templateId);
     setSelectedTemplate(template);
 
     if (template) {
       const initialData = {};
-      template.fields.forEach(f => {
+      template.fields.forEach((f) => {
         initialData[f.label] = "";
       });
       setFormData(initialData);
@@ -71,7 +74,6 @@ export default function IssueCertificate() {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("Response from backend:", result);
         alert("Certificate issued successfully!");
         setSelectedTemplate(null);
         setFormData({});
@@ -88,40 +90,85 @@ export default function IssueCertificate() {
     <div className="ic-wrap">
       <h2 className="ic-title">Issue Certificate</h2>
 
+      {/* 🔀 MODE TOGGLE */}
+      <div className="ic-toggle">
+        <button
+          className={mode === "single" ? "active" : ""}
+          onClick={() => {
+            setMode("single");
+            setSelectedTemplate(null);
+          }}
+        >
+          Single Issue
+        </button>
+        <button
+          className={mode === "bulk" ? "active" : ""}
+          onClick={() => {
+            setMode("bulk");
+            setSelectedTemplate(null);
+          }}
+        >
+          Bulk Issue
+        </button>
+      </div>
+
       {templates.length === 0 ? (
-        <div className="ic-empty">No templates available. Create one first.</div>
+        <div className="ic-empty">
+          No templates available. Create one first.
+        </div>
       ) : (
         <div className="ic-content">
-          {!selectedTemplate ? (
-            <div className="ic-template-select">
-              <label>Select Template:</label>
-              <select onChange={(e) => handleTemplateSelect(e.target.value)} defaultValue="">
-                <option value="" disabled>-- Choose Template --</option>
-                {templates.map(t => (
-                  <option key={t._id} value={t._id}>
-                    {t.templateName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <form className="ic-form" onSubmit={handleSubmit}>
-              {selectedTemplate.fields.map((f, idx) => (
-                <div className="ic-form-group" key={idx}>
-                  <label>{f.label}{f.label === "Email" ? " *" : ""}</label>
-                  <input
-                    type={f.type || "text"}
-                    value={formData[f.label] || ""}
-                    onChange={(e) => handleChange(e, f.label)}
-                    required={f.label === "Email"}
-                    placeholder={`Enter ${f.label}`}
-                  />
+          {/* ================= SINGLE ISSUE ================= */}
+          {mode === "single" && (
+            <>
+              {!selectedTemplate ? (
+                <div className="ic-template-select">
+                  <label>Select Template:</label>
+                  <select
+                    onChange={(e) => handleTemplateSelect(e.target.value)}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      -- Choose Template --
+                    </option>
+                    {templates.map((t) => (
+                      <option key={t._id} value={t._id}>
+                        {t.templateName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              ))}
-              <button type="submit" className="ic-btn-submit">
-                Issue Certificate
-              </button>
-            </form>
+              ) : (
+                <form className="ic-form" onSubmit={handleSubmit}>
+                  {selectedTemplate.fields.map((f, idx) => (
+                    <div className="ic-form-group" key={idx}>
+                      <label>
+                        {f.label}
+                        {f.label === "Email" ? " *" : ""}
+                      </label>
+                      <input
+                        type={f.type || "text"}
+                        value={formData[f.label] || ""}
+                        onChange={(e) => handleChange(e, f.label)}
+                        required={f.label === "Email"}
+                        placeholder={`Enter ${f.label}`}
+                      />
+                    </div>
+                  ))}
+                  <button type="submit" className="ic-btn-submit">
+                    Issue Certificate
+                  </button>
+                </form>
+              )}
+            </>
+          )}
+
+          {/* ================= BULK ISSUE ================= */}
+          {mode === "bulk" && (
+            <BulkIssueCertificate
+              templates={templates}
+              token={token}
+            />
           )}
         </div>
       )}

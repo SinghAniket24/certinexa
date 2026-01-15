@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/aniket/Documents/certinexa/blockchain/contracts/CertificateRegistry.sol": {
-      "lastModificationDate": 1765000782141,
+      "lastModificationDate": 1768067335559,
       "contentHash": "3955e4b93fb1637e9ff73ff8d6faf144",
       "sourceName": "contracts/CertificateRegistry.sol",
       "solcConfig": {

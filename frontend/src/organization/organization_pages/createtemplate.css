@@ -1,193 +1,274 @@
-/* Container */
+/* ================================
+   GLOBAL THEME (Added Gradient)
+=================================*/
+:root {
+  --gradient-light: linear-gradient(135deg, #f0f4ff, #e0ebff);
+  --gradient-hover: linear-gradient(135deg, #dbe4ff, #c5d2ff);
+}
+
+/* ================================
+   GLOBAL CONTAINER (Gradient Added)
+=================================*/
 .create-template-wrap {
   padding: 20px;
   max-width: 900px;
   margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+  transition: all 0.3s ease;
+
+  /* ⭐ Added Sky-Blue Gradient Background */
+  background: var(--gradient-light);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
 }
 
+/* ================================
+   PAGE / FORM TITLE — Gradient Like VC
+=================================*/
 .ct-title {
   text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 35px;
+  text-transform: uppercase;
+
+  /* Gradient Text */
+  background: linear-gradient(90deg, #1e40af, #2563eb, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
-/* Card */
+.ct-title:hover {
+  transform: scale(1.03);
+}
+
+/* ================================
+   FORM CARD (with hover)
+=================================*/
 .ct-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 25px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 28px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: all 0.35s ease;
 }
 
 .ct-card:hover {
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+  border-color: #2563eb;
 }
 
-/* Template Name */
+/* ================================
+   LABELS
+=================================*/
 .ct-label {
   display: block;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: #555;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1e293b;
+  font-size: 15px;
 }
 
+/* ================================
+   INPUT FIELDS
+=================================*/
 .ct-input {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
   margin-bottom: 20px;
   font-size: 15px;
-  transition: border 0.3s ease;
+  transition: all 0.3s ease;
+  background: #f1f5f9;
+}
+
+.ct-input:hover {
+  background: #e8eef7;
+  border-color: #3b82f6;
 }
 
 .ct-input:focus {
-  border-color: #007bff;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
   outline: none;
 }
 
-/* Fields Header */
+/* ================================
+   SECTION HEADER
+=================================*/
 .fields-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
+/* ADD FIELD BUTTON */
 .ct-small-btn {
-  background: #007bff;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
+  transition: 0.25s ease;
 }
 
 .ct-small-btn:hover {
-  background: #0056b3;
+  transform: scale(1.08);
+  background: linear-gradient(90deg, #1e3a8a, #1e40af);
 }
 
-/* Fields List */
+/* ================================
+   FIELD LIST
+=================================*/
 .fields-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
+/* FIELD ROW */
 .field-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
-  background: #f9f9f9;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 15px 18px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: 0.3s ease;
+}
+
+.field-row:hover {
+  background: #eef3ff;
+  border-color: #2563eb;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.18);
+}
+
+/* FIELD ELEMENTS */
+.field-label,
+.field-type {
+  flex: 2;
   padding: 10px 12px;
   border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  transition: 0.25s ease;
 }
 
-.field-label {
-  flex: 2;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.field-label:hover,
+.field-type:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 4px rgba(37,99,235,0.25);
 }
 
-.field-type {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
+/* Required Toggle */
 .field-required {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
 }
 
+/* Remove Button */
 .field-remove {
-  background: #dc3545;
+  background: #ef4444;
   color: white;
   border: none;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 7px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  transition: 0.25s ease;
 }
 
-.field-remove:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.field-remove:hover {
+  background: #dc2626;
+  transform: scale(1.08);
 }
 
-/* Actions */
+/* ================================
+   ACTION BUTTONS
+=================================*/
 .ct-actions {
-  margin-top: 20px;
+  margin-top: 25px;
   display: flex;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
+/* SAVE BUTTON */
 .ct-save {
-  background: #28a745;
+  background: #2563eb;
   color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 12px 26px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .ct-save:hover {
-  background: #218838;
+  background: #1d4ed8;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
 }
 
+/* CANCEL BUTTON */
 .ct-cancel {
-  background: #ffc107;
-  color: #333;
-  padding: 10px 20px;
-  border-radius: 8px;
+  background: #64748b;
+  color: white;
+  padding: 12px 26px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .ct-cancel:hover {
-  background: #e0a800;
+  background: #475569;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(100, 116, 139, 0.35);
 }
 
-/* Message */
-.ct-message {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #dc3545;
-  font-weight: 500;
-}
-
-/* Responsive */
+/* ================================
+   RESPONSIVE
+=================================*/
 @media (max-width: 768px) {
   .field-row {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .field-type, .field-required, .field-remove {
-    flex: none;
+  .field-type,
+  .field-required,
+  .field-remove {
     width: 100%;
-  }
-
-  .fields-header {
-    flex-direction: column;
-    gap: 10px;
   }
 
   .ct-actions {
     flex-direction: column;
+  }
+
+  .ct-save,
+  .ct-cancel {
+    width: 100%;
   }
 }

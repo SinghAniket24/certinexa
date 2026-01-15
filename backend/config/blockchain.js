@@ -1,4 +1,4 @@
-const { ethers } = require("ethers");
+const { ethers, NonceManager } = require("ethers");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
@@ -14,7 +14,10 @@ const abi = contractJson.abi;
    PROVIDER & WALLET
 ========================= */
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
-const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+
+// 🔐 Wrap wallet with NonceManager (IMPORTANT FIX)
+const baseWallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const wallet = new NonceManager(baseWallet);
 
 /* =========================
    CONTRACT INSTANCE
@@ -33,7 +36,7 @@ const storeCertificateOnChain = async (certId, hash, signature) => {
     console.log(`Blockchain: Storing certificate ${certId}`);
 
     const tx = await contract.storeCertificate(certId, hash, signature);
-    await tx.wait();
+    await tx.wait(); // ensure sequential mining
 
     return tx.hash;
   } catch (error) {
@@ -49,7 +52,6 @@ const verifyCertificateOnChain = async (certId) => {
   try {
     const result = await contract.getCertificate(certId);
 
-    // If contract returns empty hash, certificate does not exist
     if (!result || result[0] === ethers.ZeroHash) {
       return { exists: false };
     }

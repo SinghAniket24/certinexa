@@ -1,6 +1,9 @@
+/* =========================================
+   GLOBAL THEME VARIABLES
+=========================================*/
 :root {
   --bg-dark: #0f172a;
-  --bg-light: #f8fafc;
+  --bg-light: #f1f5f9;
   --white: #ffffff;
   --text-main: #1e293b;
   --text-muted: #64748b;
@@ -8,58 +11,101 @@
   --primary-hover: #1d4ed8;
   --border: #e2e8f0;
   --danger: #ef4444;
+  --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --shadow-strong: 0 12px 35px rgba(0, 0, 0, 0.15);
+
+  /* 🚀 Added from issued.css */
+  --gradient-light: linear-gradient(135deg, #f0f4ff, #e0ebff);
+  --gradient-hover: linear-gradient(135deg, #dbe4ff, #c5d2ff);
 }
 
+/* =========================================
+   PAGE WRAPPER (Sky Blue Background Added)
+=========================================*/
 .mt-wrap {
-  padding: 20px;
-  max-width: 1100px;
+  padding: 25px;
+  max-width: 1200px;
   margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
   color: var(--text-main);
+  animation: fadeIn 0.4s ease;
+
+  /* ⭐ SAME BACKGROUND AS issued.css */
+  background: var(--gradient-light);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
+/* =========================================
+   TITLE (Premium Gradient)
+=========================================*/
 .mt-title {
   text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 30px;
-  color: var(--text-main);
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 35px;
+  letter-spacing: 1px;
+
+  background: linear-gradient(90deg, #1e40af, #2563eb, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
+.mt-title:hover {
+  transform: scale(1.03);
+}
+
+/* Empty State */
 .mt-empty {
   text-align: center;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--text-muted);
+  padding: 25px 0;
 }
+
 .mt-empty span {
   display: block;
-  margin-top: 6px;
+  margin-top: 8px;
+  font-size: 16px;
   color: var(--primary);
+  font-weight: 600;
 }
 
-/* Grid */
+/* =========================================
+   GRID LAYOUT
+=========================================*/
 .mt-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 25px;
+  margin-top: 10px;
 }
 
-/* Card */
+
+/* =========================================
+   CARD DESIGN
+=========================================*/
 .mt-card {
   background: var(--white);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border);
+  transition: 0.3s ease;
 }
 
 .mt-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-strong);
+  border-color: var(--primary);
 }
 
+/* Card Header */
 .mt-card-header {
   display: flex;
   justify-content: flex-end;
@@ -71,142 +117,217 @@
   gap: 10px;
 }
 
+/* Delete Icon */
 .mt-card-icon {
   cursor: pointer;
   color: var(--danger);
-  font-size: 18px;
-  transition: color 0.2s;
+  font-size: 20px;
+  transition: 0.2s;
 }
 
 .mt-card-icon:hover {
-  color: darkred;
+  color: #b91c1c;
 }
 
+/* Card Title */
 .mt-card-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
   color: var(--text-main);
 }
 
-/* Field chips */
+/* =========================================
+   FIELD CHIPS
+=========================================*/
 .mt-field-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 15px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .mt-chip {
-  background: var(--bg-light);
-  color: var(--text-muted);
-  padding: 5px 10px;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid #cbd5e1;
+  transition: 0.2s ease;
 }
 
-/* View button */
+.mt-chip:hover {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1e3a8a;
+}
+
+/* =========================================
+   VIEW BUTTON
+=========================================*/
 .mt-btn-view {
   background: var(--primary);
   color: var(--white);
-  padding: 10px 0;
+  padding: 12px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
   width: 100%;
-  transition: background 0.2s;
+  transition: 0.25s ease;
 }
 
 .mt-btn-view:hover {
   background: var(--primary-hover);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+  transform: translateY(-3px);
 }
 
-/* Modal */
+/* =========================================
+   MODAL
+=========================================*/
 .mt-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15,23,42,0.6); /* semi-dark overlay */
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: 200;
+  animation: fadeIn 0.3s ease;
 }
 
 .mt-modal-content {
   background: var(--white);
-  padding: 25px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  animation: fadeIn 0.3s ease;
+  padding: 30px;
+  border-radius: 14px;
+  width: 92%;
+  max-width: 520px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-strong);
+  animation: slideUp 0.35s ease;
 }
 
 .mt-fields-list {
-  margin-top: 15px;
+  margin-top: 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .mt-field-row {
   display: flex;
   justify-content: space-between;
+  padding: 12px 14px;
   background: var(--bg-light);
-  padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   color: var(--text-main);
+  border: 1px solid var(--border);
 }
 
 .mt-field-label {
-  font-weight: 500;
+  font-weight: 600;
   flex: 2;
 }
 
 .mt-field-type {
   flex: 1;
   text-align: center;
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .mt-field-req {
   flex: 1;
   text-align: right;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--danger);
 }
 
+/* Close Button */
 .mt-btn-close {
-  margin-top: 20px;
-  background: var(--text-muted);
+  margin-top: 22px;
+  background: #475569;
   color: var(--white);
   border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
+  padding: 11px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.25s ease;
+  width: 100%;
 }
 
 .mt-btn-close:hover {
-  background: #4b5563;
+  background: #334155;
 }
 
-/* Animation */
+/* =========================================
+   ANIMATIONS
+=========================================*/
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(-20px);}
-  to {opacity: 1; transform: translateY(0);}
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-/* Responsive */
+@keyframes slideUp {
+  from { transform: translateY(25px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popupScale {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.mt-animate {
+  animation: popupScale 0.25s ease;
+}
+
+/* Modal Title */
+.mt-modal-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Notification message */
+.mt-message {
+  text-align: center;
+  padding: 10px 15px;
+  background: var(--bg-light);
+  border-left: 4px solid var(--primary);
+  color: var(--text-main);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+/* =========================================
+   RESPONSIVE
+=========================================*/
 @media (max-width: 768px) {
-  .mt-card-header {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
+  .mt-grid { gap: 18px; }
+  .mt-card-title { font-size: 20px; }
+}
+
+.mt-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mt-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
