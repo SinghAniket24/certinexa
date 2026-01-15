@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiX, FiCheckCircle, FiExternalLink, FiDownload } from "react-icons/fi";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import CertificateTemplate from "./CertificateTemplate"; 
 import "./recipient_dashboard.css";
 
 const RecipientDashboard = () => {
@@ -9,6 +12,7 @@ const RecipientDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const certRef = useRef();
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -66,10 +70,19 @@ const RecipientDashboard = () => {
       year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   };
+  const downloadPDF = async () => {
+    const element = certRef.current;
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    
+    const pdf = new jsPDF("landscape", "px", [800, 600]);
+    pdf.addImage(imgData, "PNG", 0, 0, 800, 600);
+    pdf.save(`${selectedCert.certificateName}.pdf`);
+  };
 
   if (loading) return <div className="dash-loading">Loading Dashboard...</div>;
 
-  return (
+return (
     <div className="dash-container">
       <header className="dash-header">
         <div className="dash-brand">CertiNexa</div>
@@ -108,7 +121,6 @@ const RecipientDashboard = () => {
                 </div>
 
                 <div className="card-actions">
-                    {/* OPEN MODAL ON CLICK */}
                     <button 
                       className="btn-view" 
                       onClick={() => setSelectedCert(cert)}
@@ -121,6 +133,14 @@ const RecipientDashboard = () => {
           </div>
         )}
       </main>
+
+      {/* HIDDEN DOWNLOAD TEMPLATE 
+          This is what jsPDF/html2canvas will capture. 
+          It stays off-screen but stays updated with selectedCert data.
+      */}
+      <div style={{ position: "absolute", left: "-9999px", top: "0" }}>
+        <CertificateTemplate ref={certRef} data={selectedCert} />
+      </div>
 
       {/* ================= MODAL POPUP ================= */}
       {selectedCert && (
@@ -137,7 +157,6 @@ const RecipientDashboard = () => {
             </div>
 
             <div className="modal-body">
-              {/* Section 1: Core Info */}
               <div className="info-group">
                 <label>Issued By</label>
                 <p>{selectedCert.orgName}</p>
@@ -157,7 +176,6 @@ const RecipientDashboard = () => {
 
               <hr className="modal-divider" />
 
-              {/* Section 2: Dynamic Fields (Grades, Course, etc.) */}
               <h4 className="section-title">Certificate Details</h4>
               <div className="dynamic-fields-grid">
                 {Object.entries(selectedCert.fields || {}).map(([key, value]) => (
@@ -170,11 +188,8 @@ const RecipientDashboard = () => {
 
               <hr className="modal-divider" />
 
-              {/* Section 3: Technical / Blockchain Data */}
               <h4 className="section-title">Technical Verification</h4>
               
-              {/* REMOVED: Digital Signature & Data Hash */}
-
               <div className="info-group">
                 <label>Blockchain Transaction ID</label>
                 {selectedCert.blockchainTxId ? (
@@ -190,13 +205,17 @@ const RecipientDashboard = () => {
                   <p className="text-muted">Pending Blockchain Sync...</p>
                 )}
               </div>
-
             </div>
 
             <div className="modal-footer">
               <button className="btn-secondary" onClick={() => setSelectedCert(null)}>Close</button>
-              {/* Placeholder for PDF Download */}
-              <button className="btn-primary" onClick={() => alert("Download feature coming soon!")}>
+              
+              {/* UPDATED: Calling the downloadPDF function */}
+              <button 
+                className="btn-primary" 
+                onClick={downloadPDF}
+                disabled={!selectedCert}
+              >
                 <FiDownload /> Download PDF
               </button>
             </div>
