@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaEye, FaTimes, FaCopy, FaSearch } from "react-icons/fa";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import CertificateTemplate from "../../recepient/CertificateTemplate";
 import "./ViewCertificate.css";
 
 export default function ViewCertificates() {
@@ -7,6 +10,12 @@ export default function ViewCertificates() {
   const [loading, setLoading] = useState(true);
   const [viewingCert, setViewingCert] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // 🔴 delete confirmation modal
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  // 🔵 added for download
+  const certRef = useRef();
 
   const token = localStorage.getItem("org_token");
 
@@ -42,17 +51,30 @@ export default function ViewCertificates() {
     alert("Copied!");
   };
 
-  // ================= DELETE CERTIFICATE =================
-  const handleDelete = async (certId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this certificate?\nThis action cannot be undone."
-    );
+  // ================= DOWNLOAD CERTIFICATE =================
+  const downloadPDF = async () => {
+    if (!viewingCert) return;
 
-    if (!confirmDelete) return;
+    const element = certRef.current;
+    const canvas = await html2canvas(element, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("landscape", "px", [800, 600]);
+    pdf.addImage(imgData, "PNG", 0, 0, 800, 600);
+    pdf.save(`${viewingCert.certificateName}.pdf`);
+  };
+
+  // ================= DELETE CERTIFICATE =================
+  const handleDelete = (certId) => {
+    setDeleteTarget(certId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
 
     try {
       const res = await fetch(
-        `http://localhost:5000/certificate/${certId}`,
+        `http://localhost:5000/certificate/${deleteTarget}`,
         {
           method: "DELETE",
           headers: {
@@ -63,14 +85,14 @@ export default function ViewCertificates() {
 
       if (res.ok) {
         setCertificates((prev) =>
-          prev.filter((c) => c._id !== certId)
+          prev.filter((c) => c._id !== deleteTarget)
         );
 
-        if (viewingCert && viewingCert._id === certId) {
+        if (viewingCert && viewingCert._id === deleteTarget) {
           closeView();
         }
 
-        alert("Certificate deleted successfully");
+        setDeleteTarget(null);
       } else {
         alert("Failed to delete certificate");
       }
@@ -78,6 +100,10 @@ export default function ViewCertificates() {
       console.error("Delete error:", err);
       alert("Server error while deleting certificate");
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteTarget(null);
   };
 
   /* ================= 🔍 SEARCH ================= */
@@ -161,16 +187,13 @@ export default function ViewCertificates() {
         ))
       )}
 
-      {/* ================= MODAL ================= */}
+      {/* ================= VIEW MODAL ================= */}
       {viewingCert && (
         <div className="vc-modal">
           <div className="vc-modal-content">
             <div className="vc-modal-header">
               <h3>{viewingCert.certificateName}</h3>
-              <FaTimes
-                className="vc-close-icon"
-                onClick={closeView}
-              />
+              <FaTimes className="vc-close-icon" onClick={closeView} />
             </div>
 
             <div className="vc-modal-body">
@@ -241,10 +264,70 @@ export default function ViewCertificates() {
                   )}
                 </tbody>
               </table>
+
+              {/* 🔵 DOWNLOAD BUTTON (ADDED) */}
+              <div style={{ marginTop: "20px", textAlign: "right" }}>
+                <button
+                  className="vc-btn-view"
+                  onClick={downloadPDF}
+                >
+                  Download PDF
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* ================= DELETE CONFIRM MODAL ================= */}
+      {deleteTarget && (
+        <div className="vc-modal">
+          <div className="vc-modal-content" style={{ maxWidth: "420px" }}>
+            <div className="vc-modal-header">
+              <h3>Confirm Delete</h3>
+              <FaTimes
+                className="vc-close-icon"
+                onClick={cancelDelete}
+              />
+            </div>
+
+            <div className="vc-modal-body">
+              <p style={{ color: "#64748b", marginBottom: "22px" }}>
+                Are you sure you want to delete this certificate?
+                <br />
+                This action cannot be undone.
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "12px",
+                }}
+              >
+                <button
+                  className="vc-btn-view"
+                  onClick={cancelDelete}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  className="vc-btn-delete"
+                  onClick={confirmDelete}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🔵 HIDDEN TEMPLATE FOR PDF */}
+      <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
+        <CertificateTemplate ref={certRef} data={viewingCert} />
+      </div>
     </div>
   );
 }
