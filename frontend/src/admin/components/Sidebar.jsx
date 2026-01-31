@@ -1,28 +1,26 @@
 import React from 'react';
-import { LayoutDashboard, Users, FileCheck, Settings, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { LayoutDashboard, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 // IMPORT EXTERNAL CSS
 import '../styles/variables.css';
 import '../styles/Sidebar.css';
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
-  const navigate = useNavigate(); // 2. Initialize the hook
+// Added default value 'dashboard' to activeTab to ensure it is always highlighted by default
+const Sidebar = ({ activeTab = 'dashboard', setActiveTab }) => {
+  const navigate = useNavigate();
 
-  // 3. Define the Logout Function
   const handleLogout = () => {
     // Clear the stored data
     localStorage.removeItem('token');
     localStorage.removeItem('admin');
     
-    // Redirect to the Admin Login page (or Home)
+    // Redirect to the Admin Login page
     navigate('/admin'); 
   };
 
+  // Only Dashboard remains in the menu
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-    { id: 'organizations', label: 'Organizations', icon: <Users size={20} /> },
-    { id: 'certificates', label: 'Certificates', icon: <FileCheck size={20} /> },
-    { id: 'settings', label: 'Settings', icon: <Settings size={20} /> },
   ];
 
   return (
@@ -38,7 +36,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         {menuItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => setActiveTab && setActiveTab(item.id)}
+            // Since activeTab defaults to 'dashboard', this condition is true by default
             className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
           >
             {item.icon}
@@ -49,7 +48,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
       {/* Footer / Logout */}
       <div className="sidebar-footer">
-        {/* 4. Attach the click handler here */}
         <button className="nav-item logout-btn" onClick={handleLogout}>
           <LogOut size={20} />
           <span>Logout</span>

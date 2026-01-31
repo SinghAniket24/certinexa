@@ -132,7 +132,7 @@ const AdminDashboard = () => {
             <main className="main-content">
                 <header className="dashboard-header">
                     <div className="header-title">
-                        <h1>Organization Verification</h1>
+                        <h1>Organization Dashboard</h1>
                         <p>Review and verify registration requests.</p>
                     </div>
 
