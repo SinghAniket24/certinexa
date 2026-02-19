@@ -10,6 +10,12 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  // ✅ API BASE URL (Local + Render Support)
+  const API_BASE_URL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://certinexa-backend.onrender.com";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
@@ -17,7 +23,7 @@ export default function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/organization/login",
+        `${API_BASE_URL}/api/organization/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
