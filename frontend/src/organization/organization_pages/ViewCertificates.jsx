@@ -22,7 +22,7 @@ export default function ViewCertificates() {
   useEffect(() => {
     const fetchCerts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/certificate/list", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/certificate/list`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

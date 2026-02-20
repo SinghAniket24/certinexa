@@ -31,7 +31,7 @@ export default function BulkIssueCertificate({ templates, token }) {
       setResult(null);
 
       const response = await fetch(
-        "http://localhost:5000/certificate/bulk-issue",
+        `${process.env.REACT_APP_API_URL}/certificate/bulk-issue`,
         {
           method: "POST",
           headers: {

@@ -24,7 +24,7 @@ const RecipientDashboard = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/recepient/my-certificates", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/recepient/my-certificates`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
