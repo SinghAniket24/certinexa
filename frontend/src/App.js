@@ -8,7 +8,7 @@ import {
   FaLink
 } from "react-icons/fa";
 import "./App.css";
-import { useNavigate, Routes, Route, Link } from "react-router-dom";
+import { useNavigate, Routes, Route } from "react-router-dom";
 
 // Imports
 import Login from "./organization/login";
