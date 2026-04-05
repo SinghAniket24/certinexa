@@ -7,6 +7,14 @@ export default function IssueCertificate() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [formData, setFormData] = useState({});
   const [mode, setMode] = useState("single"); // single | bulk
+  const [loading, setLoading] = useState(false);
+
+  // Dialog state
+  const [dialog, setDialog] = useState({
+    open: false,
+    message: "",
+    type: "success"
+  });
 
   const token = localStorage.getItem("org_token");
 
@@ -53,11 +61,17 @@ export default function IssueCertificate() {
 
     const primaryEmail = formData["Email"];
     if (!primaryEmail) {
-      alert("Email is required!");
+      setDialog({
+        open: true,
+        message: "Email is required!",
+        type: "error"
+      });
       return;
     }
 
     try {
+      setLoading(true);
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/certificate/issue`, {
         method: "POST",
         headers: {
@@ -74,15 +88,29 @@ export default function IssueCertificate() {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Certificate issued successfully!");
+        setDialog({
+          open: true,
+          message: "Certificate issued successfully!",
+          type: "success"
+        });
         setSelectedTemplate(null);
         setFormData({});
       } else {
-        alert(result.message || "Error issuing certificate");
+        setDialog({
+          open: true,
+          message: result.message || "Error issuing certificate",
+          type: "error"
+        });
       }
     } catch (error) {
       console.error("Error issuing certificate:", error);
-      alert("Something went wrong!");
+      setDialog({
+        open: true,
+        message: "Something went wrong!",
+        type: "error"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,7 +146,6 @@ export default function IssueCertificate() {
         </div>
       ) : (
         <div className="ic-content">
-          {/* ================= SINGLE ISSUE ================= */}
           {mode === "single" && (
             <>
               {!selectedTemplate ? (
@@ -155,21 +182,44 @@ export default function IssueCertificate() {
                       />
                     </div>
                   ))}
-                  <button type="submit" className="ic-btn-submit">
-                    Issue Certificate
+
+                  <button
+                    type="submit"
+                    className="ic-btn-submit"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span className="spinner"></span>
+                        Issuing on Blockchain...
+                      </>
+                    ) : (
+                      "Issue Certificate"
+                    )}
                   </button>
                 </form>
               )}
             </>
           )}
 
-          {/* ================= BULK ISSUE ================= */}
           {mode === "bulk" && (
             <BulkIssueCertificate
               templates={templates}
               token={token}
             />
           )}
+        </div>
+      )}
+
+      {/*  DIALOG BOX */}
+      {dialog.open && (
+        <div className="ic-dialog-overlay">
+          <div className={`ic-dialog-box ${dialog.type}`}>
+            <p>{dialog.message}</p>
+            <button onClick={() => setDialog({ ...dialog, open: false })}>
+              OK
+            </button>
+          </div>
         </div>
       )}
     </div>
