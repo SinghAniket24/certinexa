@@ -1,4 +1,4 @@
-# CertiNexa - Blockchain Certificate System
+# CertiNexa -Blockchain Certificate System
 
 CertiNexa is a decentralized application that allows organizations to issue, manage, and verify digital certificates on the blockchain. It provides a secure and tamper-proof way to store and share certificates, eliminating the need for traditional paper-based certificates.
 
