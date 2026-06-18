@@ -8,7 +8,7 @@ export default function Chatbot() {
     {
       from: "bot",
       text:
-        "Hi 👋 I’m CertiNexa Assistant.\n\nYou can ask me about:\n• Platform overview\n• Certificate security\n• Verification process"
+        "Hi , I’m CertiNexa Assistant.\n\nYou can ask me about:\n• Platform overview\n• Certificate security\n• Verification process"
     }
   ]);
   const [input, setInput] = useState("");
@@ -56,7 +56,7 @@ export default function Chatbot() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: "⚠️ Server error. Please try again later." }
+        { from: "bot", text: "Server error. Please try again later." }
       ]);
     }
 
