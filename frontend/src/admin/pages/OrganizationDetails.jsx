@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, ExternalLink, CheckCircle, XCircle, AlertTriangle, FileText, MapPin, Mail, Phone, Hash, Calendar } from 'lucide-react';
 import '../styles/OrganizationStyles.css';
 
 const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
+    const navigate = useNavigate();
     const [isRejecting, setIsRejecting] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,14 +20,24 @@ const OrganizationDetails = ({ org, onClose, onUpdateStatus }) => {
 
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/organization/${org._id}/status`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/organization/${org._id}/status`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
                 body: JSON.stringify({
                     status,
                     rejectionReason: status === 'rejected' ? rejectionReason : null
                 })
             });
+
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("admin");
+                navigate("/admin/login", { replace: true });
+                return;
+            }
 
             const data = await response.json();
 
