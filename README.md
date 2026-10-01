@@ -1,208 +1,92 @@
-# CertiNexa -Blockchain Certificate System
+# CertiNexa – Blockchain Certificate System
 
-CertiNexa is a decentralized application that allows organizations to issue, manage, and verify digital certificates on the blockchain. It provides a secure and tamper-proof way to store and share certificates, eliminating the need for traditional paper-based certificates.
+CertiNexa is a decentralized application for issuing, managing and verifying digital certificates. Each certificate is hashed, digitally signed by the issuing organization and recorded on an Ethereum-compatible blockchain, making it tamper-proof and instantly verifiable by anyone.
+
+**Live demo:** [certinexa.vercel.app](https://certinexa.vercel.app)
+
+## How It Works
+
+1. An organization registers and is approved by an admin, which generates its RSA signing keys.
+2. The organization issues a certificate (single or bulk) from a template.
+3. The backend computes a SHA-256 hash of the certificate, signs it with the organization's private key and stores the hash and signature on-chain via the `CertificateRegistry` smart contract.
+4. The full certificate is saved in MongoDB and the recipient can view it in their portal.
+5. Anyone can verify a certificate by its ID. The system recomputes the hash and compares it with the on-chain record.
+
+## Features
+
+- **Four role-based portals:** Admin, Organization, Recipient and Verifier
+- **Organization approval workflow** with email notifications
+- **Custom certificate templates** and **bulk issuing** from CSV/Excel files
+- **On-chain verification** to detect tampered or forged certificates
+- **Digital signatures:** per-organization RSA keys, with private keys encrypted (AES-256-GCM) at rest
+- **AI chatbot** (Gemini) that answers questions about the platform
+
+## Tech Stack
+
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React, React Router |
+| Backend | Node.js, Express, MongoDB (Mongoose), JWT, ethers.js |
+| Blockchain | Solidity, Hardhat, Hardhat Ignition |
 
 ## Project Structure
 
-The project is divided into three main folders:
+- `frontend/`: React application with the four portals
+- `backend/`: Express REST API, authentication, signing and blockchain integration
+- `blockchain/`: `CertificateRegistry` smart contract, tests and deployment module
 
-- `frontend`: Contains the React frontend application.
-- `backend`: Contains the Node.js/Express backend server.
-- `blockchain`: Contains the Solidity smart contract and Hardhat development environment.
+## Getting Started
 
-### Frontend
+**Prerequisites:** Node.js v18+, npm and a running MongoDB instance.
 
-The frontend is a React application that provides a user interface for interacting with the CertiNexa platform. It has different portals for different user roles:
+**1. Clone and install**
 
-- **Admin Portal:** For managing organizations and system settings.
-- **Organization Portal:** For organizations to issue and manage certificates.
-- **Recipient Portal:** For users to view and manage their certificates.
-- **Verifier Portal:** For anyone to verify the authenticity of a certificate.
-
-#### File Structure
-
-```
-frontend/
-├── public/
-│   ├── index.html
-│   └── ...
-└── src/
-    ├── App.js
-    ├── admin/
-    │   ├── components/
-    │   │   └── Sidebar.jsx
-    │   ├── pages/
-    │   │   ├── AdminDashboard.jsx
-    │   │   ├── AdminLogin.jsx
-    │   │   ├── AdminSignup.jsx
-    │   │   └── OrganizationDetails.jsx
-    │   └── styles/
-    │       └── ...
-    ├── organization/
-    │   ├── login.js
-    │   ├── organization_dashboard.jsx
-    │   ├── organization_pages/
-    │   │   ├── CreateTemplate.jsx
-    │   │   ├── IssueCertificate.jsx
-    │   │   ├── ManageTemplates.jsx
-    │   │   ├── Profile.jsx
-    │   │   └── ViewCertificates.jsx
-    │   └── register.js
-    ├── recepient/
-    │   ├── login.jsx
-    │   └── register.jsx
-    └── verification/
-        └── verifier.jsx
+```bash
+git clone https://github.com/SinghAniket24/certinexa.git
+cd certinexa
+(cd blockchain && npm install)
+(cd backend && npm install)
+(cd frontend && npm install)
 ```
 
-### Backend
+**2. Start a local blockchain and deploy the contract**
 
-The backend is a Node.js/Express server that provides a RESTful API for the frontend to interact with. It handles user authentication, certificate management, and communication with the blockchain.
-
-#### File Structure
-
-```
-backend/
-├── server.js
-├── abis/
-│   └── CertificateRegistry.json
-├── config/
-│   ├── blockchain.js
-│   └── db.js
-├── digitalSignature/
-│   ├── keyGenerator.js
-│   └── keyModel.js
-├── models/
-│   ├── admin/
-│   │   └── admin.js
-│   ├── certificate/
-│   │   └── certificate.js
-│   ├── organization/
-│   │   ├── organization.js
-│   │   └── template.js
-│   └── recepient/
-│       └── recepient.js
-├── routes/
-│   ├── adminRoutes.js
-│   ├── organization.js
-│   ├── organizationlogin.js
-│   ├── recepient.js
-│   ├── recepientlogin.js
-│   └── template.js
-└── utils/
-    └── emailService.js
+```bash
+cd blockchain
+npx hardhat node                      # terminal 1 (keep running)
+npx hardhat ignition deploy ignition/modules/CertificateRegistry.ts --network localhost   # terminal 2
 ```
 
-### Blockchain
+Copy the deployed contract address from the output.
 
-The blockchain component consists of a Solidity smart contract that is deployed on an Ethereum-compatible blockchain. The smart contract, `CertificateRegistry.sol`, is responsible for storing and managing the certificates on the blockchain.
+**3. Configure the backend**
 
-#### File Structure
+Create `backend/.env`:
 
+| Variable | Description |
+| --- | --- |
+| `MONGO_URI` | MongoDB connection string |
+| `PORT` | API port (default `5000`) |
+| `JWT_SECRET` | Secret used to sign login tokens |
+| `PRIVATE_KEY_SECRET` | Exactly 32 characters, used to encrypt organization signing keys |
+| `RPC_URL` | Blockchain RPC endpoint (`http://127.0.0.1:8545` for local) |
+| `PRIVATE_KEY` | Wallet private key used to send transactions (use an account printed by `hardhat node`) |
+| `CONTRACT_ADDRESS` | Address of the deployed `CertificateRegistry` contract |
+| `EMAIL_USER` / `EMAIL_PASS` | SMTP credentials for notification emails |
+| `GEMINI_API_KEY` | API key for the chatbot |
+
+**4. Run the app**
+
+```bash
+cd backend && node server.js    # http://localhost:5000
+cd frontend && npm start        # http://localhost:3000
 ```
-blockchain/
-├── contracts/
-│   └── CertificateRegistry.sol
-├── ignition/
-│   └── modules/
-│       └── CertificateRegistry.ts
-├── test/
-│   └── CertificateRegistry.test.ts
-└── typechain-types/
-```
 
-## Prerequisites
+## Smart Contract
 
-- Node.js (v16 or higher)
-- npm (v8 or higher)
-- Hardhat
-- MongoDB
+`CertificateRegistry.sol` exposes two functions:
 
-## Installation
+- `storeCertificate(certificateId, certificateHash, signature)`: records a certificate (rejects duplicate IDs)
+- `getCertificate(certificateId)`: returns the stored hash, signature and timestamp
 
-1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/your-username/certinexa.git
-    cd certinexa
-    ```
-
-2.  **Install backend dependencies:**
-
-    ```bash
-    cd backend
-    npm install
-    ```
-
-3.  **Install frontend dependencies:**
-
-    ```bash
-    cd ../frontend
-    npm install
-    ```
-
-4.  **Install blockchain dependencies:**
-
-    ```bash
-    cd ../blockchain
-    npm install
-    ```
-
-## Running the Application
-
-1.  **Start the MongoDB database:**
-
-    Make sure you have MongoDB installed and running on your local machine.
-
-2.  **Deploy the smart contract:**
-
-    ```bash
-    cd blockchain
-    npx hardhat run ignition/modules/CertificateRegistry.ts --network localhost
-    ```
-
-3.  **Start the backend server:**
-
-    ```bash
-    cd ../backend
-    npm start
-    ```
-
-    The backend server will be running on `http://localhost:5000`.
-
-4.  **Start the frontend application:**
-
-    ```bash
-    cd ../frontend
-    npm start
-    ```
-
-    The frontend application will be running on `http://localhost:3000`.
-
-## Backend API
-
-The backend API provides the following routes:
-
-- **Admin:**
-    - `POST /api/admin/register`: Register a new admin.
-    - `POST /api/admin/login`: Login an admin.
-    - `GET /api/admin/organizations`: Get all organizations.
-    - `PUT /api/admin/organization/:id/status`: Update the verification status of an organization.
-- **Organization:**
-    - `POST /api/organization/register`: Register a new organization.
-    - `POST /api/organization/login`: Login an organization.
-    - `POST /api/organization/template`: Create a new certificate template.
-    - `GET /api/organization/templates`: Get all certificate templates for an organization.
-- **Recipient:**
-    - `POST /api/recepient/register`: Register a new recipient.
-    - `POST /api/recepient/login`: Login a recipient.
-- **Certificate:**
-    - `POST /api/certificate/issue`: Issue a new certificate.
-    - `GET /api/certificate/:id`: Get a certificate by its ID.
-
-## Blockchain Smart Contract
-
-The `CertificateRegistry` smart contract has the following functions:
-
-- `storeCertificate(string memory _certificateId, string memory _certificateHash, string memory _signature)`: Stores a new certificate on the blockchain.
-- `getCertificate(string memory _certificateId)`: Retrieves a certificate from the blockchain.
+Run the contract tests with `npx hardhat test` inside `blockchain/`.
