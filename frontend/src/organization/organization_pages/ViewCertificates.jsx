@@ -74,7 +74,7 @@ export default function ViewCertificates() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/certificate/${deleteTarget}`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/certificate/${deleteTarget}`,
         {
           method: "DELETE",
           headers: {

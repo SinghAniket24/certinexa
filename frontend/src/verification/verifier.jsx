@@ -23,7 +23,7 @@ const VerifierPortal = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/verify/${certificateId}`);
+      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/verify/${certificateId}`);
       const data = await res.json();
 
       if (data.valid) {
