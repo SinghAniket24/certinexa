@@ -16,13 +16,52 @@ const generateOrgKeys = require('../digitalSignature/keyGenerator');
 const { sendStatusEmail } = require('../utils/emailService'); 
 
 // ==========================================
+// AUTH MIDDLEWARE
+// ==========================================
+async function authAdmin(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== "SuperAdmin" && decoded.role !== "Support") {
+      return res.status(403).json({ message: "Forbidden: insufficient role" });
+    }
+
+    const admin = await Admin.findById(decoded.id);
+    if (!admin) {
+      return res.status(401).json({ message: "Admin not found" });
+    }
+
+    req.adminAuth = {
+      id: admin._id,
+      role: admin.role,
+      email: admin.email,
+    };
+
+    next();
+  } catch (err) {
+    console.error("JWT error:", err.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+}
+
+// ==========================================
 // AUTHENTICATION ROUTES
 // ==========================================
 
 // @route   POST /api/admin/register
 // @desc    Register a new admin
-router.post('/register', async (req, res) => {
+router.post('/register', authAdmin, async (req, res) => {
   try {
+    if (req.adminAuth.role !== "SuperAdmin") {
+      return res.status(403).json({ message: "Forbidden: only SuperAdmin can register admins" });
+    }
+
     const { username, email, password, walletAddress, role } = req.body;
 
     // Check if admin already exists
@@ -63,7 +102,7 @@ router.post('/login', async (req, res) => {
     // Check if admin exists
     const admin = await Admin.findOne({ email });
     if (!admin) {
-      return res.status(404).json({ message: "Admin not found." });
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
     // Validate password
@@ -75,7 +114,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { id: admin._id, role: admin.role },
-      'certinexa_key', 
+      process.env.JWT_SECRET, 
       { expiresIn: '1d' }
     );
 
@@ -102,7 +141,7 @@ router.post('/login', async (req, res) => {
 
 // @route   GET /api/admin/organizations
 // @desc    Get all organizations for the dashboard
-router.get('/organizations', async (req, res) => {
+router.get('/organizations', authAdmin, async (req, res) => {
   try {
     const organizations = await Organization.find().sort({ createdAt: -1 });
     res.status(200).json(organizations);
@@ -114,12 +153,13 @@ router.get('/organizations', async (req, res) => {
 
 // @route   PUT /api/admin/organization/:id/status
 // @desc    Update organization verification_status (Approve/Reject)
-router.put('/organization/:id/status', async (req, res) => {
+router.put('/organization/:id/status', authAdmin, async (req, res) => {
   try {
+    if (req.adminAuth.role !== "SuperAdmin") {
+      return res.status(403).json({ message: "Forbidden: only SuperAdmin can update status" });
+    }
+
     const orgId = req.params.id;
-    
-    // 1. Log the body to debug (Check your terminal when you click reject)
-    console.log("Incoming Status Update Body:", req.body);
 
     // 2. Extract Data (Handle both snake_case and camelCase to be safe)
     const { status } = req.body;
