@@ -21,7 +21,7 @@ const sendStatusEmail = async (organization, status, reason = '') => {
           <h2>Congratulations, ${organization.name}!</h2>
           <p>We are pleased to inform you that your organization has been <strong>successfully verified</strong> on CertiNexa.</p>
           <p>You can now log in to your issuer portal and begin issuing certificates.</p>
-          <a href="http://localhost:3000/organization/login" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login to Portal</a>
+          <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/organization/login" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login to Portal</a>
           <p>Welcome aboard,<br>The CertiNexa Team</p>
         </div>
       `;

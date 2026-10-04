@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { Search, CheckCircle, XCircle, Clock, Filter, Eye } from 'lucide-react';
 import OrganizationDetails from './OrganizationDetails';
@@ -6,6 +7,7 @@ import '../styles/variables.css';
 import '../styles/AdminDashboard.css';
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('organizations');
     const [organizations, setOrganizations] = useState([]); 
     const [filterStatus, setFilterStatus] = useState('all');
@@ -16,11 +18,22 @@ const AdminDashboard = () => {
     // 1. FETCH DATA ON MOUNT
     useEffect(() => {
         fetchOrganizations();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchOrganizations = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/organizations');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/organizations`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("admin");
+                navigate("/admin/login", { replace: true });
+                return;
+            }
             const data = await response.json();
             if (Array.isArray(data)) {
                 setOrganizations(data);
@@ -89,11 +102,21 @@ const AdminDashboard = () => {
         updateLocalState(id, newStatus, null); 
 
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/organization/${id}/status`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/organization/${id}/status`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                },
                 body: JSON.stringify({ status: newStatus })
             });
+
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("admin");
+                navigate("/admin/login", { replace: true });
+                return;
+            }
 
             if (!response.ok) {
                 // If API fails, revert the change
