@@ -18,6 +18,7 @@ const AdminDashboard = () => {
     // 1. FETCH DATA ON MOUNT
     useEffect(() => {
         fetchOrganizations();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchOrganizations = async () => {
