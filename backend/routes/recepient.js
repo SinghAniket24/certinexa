@@ -61,7 +61,7 @@ router.post("/register", async (req, res) => {
 
     res.status(201).json({
       message: "Recepient registered successfully",
-      recepient,
+      recepient: { id: recepient._id, name: recepient.name, email: recepient.email, walletAddress: recepient.walletAddress },
     });
   } catch (err) {
     console.error(err);

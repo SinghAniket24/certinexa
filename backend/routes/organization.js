@@ -59,7 +59,7 @@ router.post("/register", async (req, res) => {
 
     await newOrg.save();
 
-    res.status(201).json({ message: "Organization registered successfully.", organization: newOrg });
+    res.status(201).json({ message: "Organization registered successfully.", organization: { id: newOrg._id, organizationName: newOrg.organizationName, officialEmail: newOrg.officialEmail } });
 
   } catch (error) {
     console.error(error);
