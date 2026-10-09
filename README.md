@@ -20,6 +20,7 @@ CertiNexa is a decentralized application for issuing, managing and verifying dig
 - **On-chain verification** to detect tampered or forged certificates
 - **Digital signatures:** per-organization RSA keys, with private keys encrypted (AES-256-GCM) at rest
 - **AI chatbot** (Gemini) that answers questions about the platform
+- **Rate limiting** on authentication and chatbot endpoints
 
 ## Tech Stack
 
