@@ -5,6 +5,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const multer = require("multer");
+const path = require("path");
 const fs = require("fs");
 const xlsx = require("xlsx");
 
@@ -67,7 +68,52 @@ function decryptPrivateKey(encryptedPrivateKey) {
 }
 
 // ================= MULTER CONFIG =================
-const upload = multer({ dest: "uploads/" });
+const ALLOWED_EXTENSIONS = [".xlsx", ".xls", ".csv"];
+const ALLOWED_MIME_TYPES = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+  "text/csv",
+  "text/plain",
+  "application/csv",
+  "text/x-csv",
+  "application/x-csv",
+  "text/comma-separated-values",
+  "text/x-comma-separated-values",
+  "application/zip",
+  "application/x-zip-compressed",
+];
+
+const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const isAllowedExt = ALLOWED_EXTENSIONS.includes(ext);
+    const isAllowedMime = ALLOWED_MIME_TYPES.includes(file.mimetype);
+
+    if (isAllowedExt && isAllowedMime) {
+      return cb(null, true);
+    }
+    return cb(new Error("Only .xlsx, .xls, and .csv files are allowed"));
+  },
+});
+
+function handleUpload(req, res, next) {
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({ message: "File size exceeds 5MB limit" });
+        }
+        return res.status(400).json({ message: err.message });
+      }
+      return res.status(400).json({ message: err.message });
+    }
+    next();
+  });
+}
 
 // ================= BULK ISSUE ROUTE =================
 
@@ -75,17 +121,16 @@ const upload = multer({ dest: "uploads/" });
 router.post(
   "/bulk-issue",
   authOrg,
-  upload.single("file"),
+  handleUpload,
   async (req, res) => {
-    const { templateName } = req.body;
-
-    if (!templateName || !req.file) {
-      return res.status(400).json({
-        message: "templateName and Excel file are required",
-      });
-    }
-
     try {
+      const { templateName } = req.body;
+
+      if (!templateName || !req.file) {
+        return res.status(400).json({
+          message: "templateName and Excel file are required",
+        });
+      }
       const org = await Organization.findById(req.orgAuth.id);
       if (!org) return res.status(404).json({ message: "Organization not found" });
 
@@ -165,9 +210,6 @@ router.post(
         }
       }
 
-      // Cleanup uploaded file
-      fs.unlinkSync(req.file.path);
-
       return res.status(200).json({
         message: "Bulk issuance completed",
         templateName,
@@ -180,6 +222,14 @@ router.post(
       return res.status(500).json({
         message: "Server error during bulk issuance",
       });
+    } finally {
+      if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (unlinkErr) {
+          console.error("Error deleting uploaded file:", unlinkErr.message);
+        }
+      }
     }
   }
 );
