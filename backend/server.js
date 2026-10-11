@@ -35,7 +35,6 @@ const organizationLoginRoutes = require("./routes/organizationlogin");
 
 // Recipient Routes
 const recepientRoutes = require("./routes/recepient");
-const recepientLoginRoutes = require("./routes/recepientlogin");
 
 // Admin Routes
 const adminRoutes = require('./routes/adminRoutes');
@@ -51,7 +50,6 @@ app.use("/api/organization", organizationLoginRoutes);
 // Use Recipient Routes
 app.use("/api/recepient/login", loginLimiter);
 app.use("/api/recepient", recepientRoutes);
-app.use("/api/recepient", recepientLoginRoutes);
 
 // Use Admin Routes
 app.use('/api/admin/login', loginLimiter);
