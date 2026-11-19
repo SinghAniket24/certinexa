@@ -53,6 +53,40 @@ router.get("/:certificateId", async (req, res) => {
       });
     }
 
+    // Step 3: Verify digital signature 🔏
+    const OrgKeys = require("../digitalSignature/keyModel");
+    const orgKey = await OrgKeys.findOne({ orgId: cert.orgId });
+
+    if (!orgKey) {
+      return res.json({
+        valid: false,
+        message: "Issuing organization keys not found",
+      });
+    }
+
+    const hashBuffer = crypto
+      .createHash("sha256")
+      .update(JSON.stringify(certificateData))
+      .digest();
+
+    const isSignatureValid = crypto.verify(
+      null,
+      hashBuffer,
+      {
+        key: orgKey.publicKey,
+        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+      },
+      Buffer.from(cert.signature, "base64")
+    );
+
+    if (!isSignatureValid) {
+      return res.json({
+        valid: false,
+        message: "❌ Signature verification failed — certificate not authentically signed",
+      });
+    }
+
 return res.json({
   valid: true,
   message: "Certificate is VALID ✔",
