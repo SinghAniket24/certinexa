@@ -10,6 +10,10 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     // Check if organization exists
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "Invalid email or password." });
+    }
+
     const org = await Organization.findOne({ officialEmail: email });
     if (!org) {
       return res.status(400).json({ message: "Invalid email or password." });

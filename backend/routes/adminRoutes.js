@@ -65,6 +65,10 @@ router.post('/register', authAdmin, async (req, res) => {
     const { username, email, password, walletAddress, role } = req.body;
 
     // Check if admin already exists
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "Invalid credentials." });
+    }
+
     const existingAdmin = await Admin.findOne({ email });
     if (existingAdmin) {
       return res.status(400).json({ message: "Admin with this email already exists." });
@@ -100,6 +104,10 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     // Check if admin exists
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "Invalid credentials." });
+    }
+
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(400).json({ message: "Invalid credentials." });
