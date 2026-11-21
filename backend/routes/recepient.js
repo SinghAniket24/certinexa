@@ -43,6 +43,10 @@ router.post("/register", async (req, res) => {
     const { name, email, password, walletAddress } = req.body;
 
     // Check existing email
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
     const existing = await Recepient.findOne({ email });
     if (existing) {
       return res.status(400).json({ message: "Email already registered" });
@@ -77,6 +81,10 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     // 1. Check if user exists
+    if (typeof email !== "string") {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
     const recepient = await Recepient.findOne({ email });
     if (!recepient) {
       return res.status(400).json({ message: "Invalid credentials" });

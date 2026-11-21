@@ -36,6 +36,10 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Passwords do not match." });
     }
 
+    if (typeof officialEmail !== "string") {
+      return res.status(400).json({ message: "Invalid email or password." });
+    }
+
     const existingOrg = await Organization.findOne({ officialEmail });
     if (existingOrg) {
       return res.status(400).json({ message: "Organization with this email already exists." });
