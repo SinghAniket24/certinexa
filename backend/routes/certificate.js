@@ -41,7 +41,7 @@ function generateCertificateId(orgName) {
   const cleaned =
     (orgName || "ORG").replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 3) || "ORG";
 
-  const randomPart = crypto.randomBytes(3).toString("hex").toUpperCase();
+  const randomPart = crypto.randomBytes(8).toString("hex").toUpperCase();
   return `${cleaned}-${randomPart}`;
 }
 
